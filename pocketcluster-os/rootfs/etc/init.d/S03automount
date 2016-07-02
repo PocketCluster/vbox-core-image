@@ -50,7 +50,7 @@ start() {
       chown -R docker:docker /home/docker
       chmod 700 /home/docker/.ssh
       chmod 600 /home/docker/.ssh/authorized_keys
-      rm -f '/home/docker/dhyve, please format-me'
+      rm -f '/home/docker/please-format-me'
       rm -f /userdata.tar
     fi
   fi
