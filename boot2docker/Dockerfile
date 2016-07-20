@@ -22,34 +22,10 @@ RUN apt-get update && apt-get -y install  unzip \
 # https://www.kernel.org/
 ENV KERNEL_VERSION  4.4.13
 
-# Fetch the kernel sources
-RUN curl --retry 10 https://www.kernel.org/pub/linux/kernel/v${KERNEL_VERSION%%.*}.x/linux-$KERNEL_VERSION.tar.xz | tar -C / -xJ && \
-    mv /linux-$KERNEL_VERSION /linux-kernel
-
-# http://aufs.sourceforge.net/
-ENV AUFS_REPO       https://github.com/sfjro/aufs4-standalone
-ENV AUFS_BRANCH     aufs4.4
-ENV AUFS_COMMIT     12387bde8dd9a74508636601bfd5b2a576932174
-# we use AUFS_COMMIT to get stronger repeatability guarantees
-
-# Download AUFS and apply patches and files, then remove it
-RUN git clone -b "$AUFS_BRANCH" "$AUFS_REPO" /aufs-standalone && \
-    cd /aufs-standalone && \
-    git checkout -q "$AUFS_COMMIT" && \
-    cd /linux-kernel && \
-    cp -r /aufs-standalone/Documentation /linux-kernel && \
-    cp -r /aufs-standalone/fs /linux-kernel && \
-    cp -r /aufs-standalone/include/uapi/linux/aufs_type.h /linux-kernel/include/uapi/linux/ && \
-    set -e && for patch in \
-        /aufs-standalone/aufs*-kbuild.patch \
-        /aufs-standalone/aufs*-base.patch \
-        /aufs-standalone/aufs*-mmap.patch \
-        /aufs-standalone/aufs*-standalone.patch \
-        /aufs-standalone/aufs*-loopback.patch \
-    ; do \
-        patch -p1 < "$patch"; \
-    done
-
+COPY linux-kernel-aufs-${KERNEL_VERSION}.tar.xz /
+RUN cd / && \
+    tar -xf linux-kernel-aufs-${KERNEL_VERSION}.tar.xz && \
+    mv /linux-kernel-aufs-${KERNEL_VERSION} /linux-kernel
 COPY kernel_config /linux-kernel/.config
 
 RUN jobs=$(nproc); \
@@ -152,13 +128,13 @@ RUN curl -fL -o $ROOTFS/usr/local/bin/generate_cert https://github.com/SvenDowid
     chmod +x $ROOTFS/usr/local/bin/generate_cert
 
 # Build VBox guest additions
-ENV VBOX_VERSION 5.0.22
+ENV VBOX_VERSION 5.1.0
+RUN mkdir -p /vboxguest
+COPY VBoxGuestAdditions_${VBOX_VERSION}.iso /vboxguest
 RUN set -x && \
-    \
-    mkdir -p /vboxguest && \
     cd /vboxguest && \
+    mv VBoxGuestAdditions_${VBOX_VERSION}.iso vboxguest.iso && \
     \
-    curl -fL -o vboxguest.iso http://download.virtualbox.org/virtualbox/${VBOX_VERSION}/VBoxGuestAdditions_${VBOX_VERSION}.iso && \
     7z x vboxguest.iso -ir'!VBoxLinuxAdditions.run' && \
     rm vboxguest.iso && \
     \
@@ -180,89 +156,6 @@ RUN set -x && \
 #    chroot "$ROOTFS" VBoxControl --version && \
 #    chroot "$ROOTFS" VBoxService --version
 
-# Install build dependencies for VMware Tools
-RUN apt-get update && apt-get install -y \
-        autoconf \
-        libdumbnet-dev \
-        libdumbnet1 \
-        libfuse-dev \
-        libfuse2 \
-        libglib2.0-0 \
-        libglib2.0-dev \
-        libmspack-dev \
-        libssl-dev \
-        libtirpc-dev \
-        libtirpc1 \
-        libtool \
-    && rm -rf /var/lib/apt/lists/*
-
-# Build VMware Tools
-ENV OVT_VERSION 10.0.0-3000743
-
-RUN curl --retry 10 -fsSL "https://github.com/vmware/open-vm-tools/archive/open-vm-tools-${OVT_VERSION}.tar.gz" | tar -xz --strip-components=1 -C /
-
-# Compile user space components, we're no longer building kernel module as we're
-# now bundling FUSE shared folders support.
-RUN cd /open-vm-tools && \
-    autoreconf -i && \
-    ./configure --disable-multimon --disable-docs --disable-tests --with-gnu-ld \
-                --without-kernel-modules --without-procps --without-gtk2 \
-                --without-gtkmm --without-pam --without-x --without-icu \
-                --without-xerces --without-xmlsecurity --without-ssl && \
-    make LIBS="-ltirpc" CFLAGS="-Wno-implicit-function-declaration" && \
-    make DESTDIR=$ROOTFS install &&\
-    /open-vm-tools/libtool --finish $ROOTFS/usr/local/lib
-
-# Building the Libdnet library for VMware Tools.
-ENV LIBDNET libdnet-1.12
-RUN curl -fL -o /tmp/${LIBDNET}.zip https://github.com/dugsong/libdnet/archive/${LIBDNET}.zip && \
-    unzip /tmp/${LIBDNET}.zip -d /vmtoolsd && \
-    cd /vmtoolsd/libdnet-${LIBDNET} && ./configure --build=i486-pc-linux-gnu && \
-    make && \
-    make install && make DESTDIR=$ROOTFS install
-
-# Horrible hack again
-RUN cd $ROOTFS/usr/local/lib && ln -s libdnet.1 libdumbnet.so.1 && readlink -f libdumbnet.so.1
-
-# TCL 7 doesn't ship with libtirpc.so.1 Dummy it up so the VMware tools work
-# again, taken from:
-# https://github.com/boot2docker/boot2docker/issues/1157#issuecomment-211647607
-RUN cd $ROOTFS/usr/local/lib && ln -s libtirpc.so libtirpc.so.1 && readlink -f libtirpc.so.1
-
-# verify that all the above actually worked (at least producing a valid binary, so we don't repeat issue #1157)
-RUN LD_LIBRARY_PATH=/lib:/usr/local/lib \
-        chroot "$ROOTFS" vmhgfs-fuse --version
-
-# Download and build Parallels Tools
-ENV PRL_MAJOR 11
-ENV PRL_VERSION 11.1.0
-ENV PRL_BUILD 32202
-
-RUN mkdir -p /prl_tools && \
-    curl -fL http://download.parallels.com/desktop/v${PRL_MAJOR}/${PRL_VERSION}/ParallelsTools-${PRL_VERSION}-${PRL_BUILD}-boot2docker.tar.gz \
-        | tar -xzC /prl_tools --strip-components 1 && \
-    cd /prl_tools && \
-    cp -Rv tools/* $ROOTFS && \
-    \
-    KERNEL_DIR=/linux-kernel/ KVER=$KERNEL_VERSION SRC=/linux-kernel/ PRL_FREEZE_SKIP=1 \
-        make -C kmods/ -f Makefile.kmods installme && \
-    \
-    find kmods/ -name '*.ko' -exec cp {} $ROOTFS/lib/modules/$KERNEL_VERSION-boot2docker/ ';'
-
-# verify that all the above actually worked (at least producing a valid binary, so we don't repeat issue #1157)
-RUN chroot "$ROOTFS" prltoolsd -V
-
-# Build XenServer Tools
-ENV XEN_REPO https://github.com/xenserver/xe-guest-utilities
-ENV XEN_VERSION v6.6.80
-
-RUN git clone -b "$XEN_VERSION" "$XEN_REPO" /xentools \
-    && cd /xentools \
-    && make \
-    && tar xvf build/dist/*.tgz -C $ROOTFS/
-
-# TODO find a binary we can attempt running that will verify at least on the surface level that the xentools are working
-
 # Make sure that all the modules we might have added are recognized (especially VBox guest additions)
 RUN depmod -a -b $ROOTFS $KERNEL_VERSION-boot2docker
 
@@ -270,9 +163,11 @@ COPY VERSION $ROOTFS/etc/version
 RUN cp -v $ROOTFS/etc/version /tmp/iso/version
 
 # Get the Docker binaries with version that matches our boot2docker version.
-RUN curl -fSL -o /tmp/dockerbin.tgz https://get.docker.com/builds/Linux/x86_64/docker-$(cat $ROOTFS/etc/version).tgz && \
-    tar -zxvf /tmp/dockerbin.tgz -C "$ROOTFS/usr/local/bin" --strip-components=1 && \
-    rm /tmp/dockerbin.tgz && \
+COPY docker-1.10.3.tgz /tmp 
+RUN cd /tmp && \
+    tar -xvzf docker-1.10.3.tgz --strip-components=1 && \
+    mv /tmp/local/bin/docker "$ROOTFS/usr/local/bin" && \
+    rm /tmp/docker-1.10.3.tgz && \
     chroot "$ROOTFS" docker -v
 
 # Copy our custom rootfs
@@ -284,15 +179,6 @@ COPY rootfs/rootfs $ROOTFS
 RUN cd $ROOTFS \
     && ln -s /usr/local/etc/acpi etc/ \
     && ln -s /usr/local/sbin/ip usr/sbin/
-
-# Build the Hyper-V KVP Daemon
-RUN cd /linux-kernel && \
-    make INSTALL_HDR_PATH=/tmp/kheaders headers_install && \
-    cd /linux-kernel/tools/hv && \
-    sed -i 's!\(^CFLAGS = .*\)!\1 -I/tmp/kheaders/include!' Makefile && \
-    make hv_kvp_daemon && \
-    cp hv_kvp_daemon $ROOTFS/usr/sbin && \
-    rm -rf /tmp/kheaders
 
 # These steps can only be run once, so can't be in make_iso.sh (which can be run in chained Dockerfiles)
 # see https://github.com/boot2docker/boot2docker/blob/master/doc/BUILD.md
@@ -308,33 +194,28 @@ RUN mv $ROOTFS/usr/local/etc/motd $ROOTFS/etc/motd
 
 # Make sure we have the correct bootsync
 RUN mv $ROOTFS/boot*.sh $ROOTFS/opt/ && \
-	chmod +x $ROOTFS/opt/*.sh
+    chmod +x $ROOTFS/opt/*.sh
 
 # Make sure we have the correct shutdown
 RUN mv $ROOTFS/shutdown.sh $ROOTFS/opt/shutdown.sh && \
-	chmod +x $ROOTFS/opt/shutdown.sh
+    chmod +x $ROOTFS/opt/shutdown.sh
 
 # Add serial console
 RUN echo "#!/bin/sh" > $ROOTFS/usr/local/bin/autologin && \
-	echo "/bin/login -f docker" >> $ROOTFS/usr/local/bin/autologin && \
-	chmod 755 $ROOTFS/usr/local/bin/autologin && \
-	echo 'ttyS0:2345:respawn:/sbin/getty -l /usr/local/bin/autologin 9600 ttyS0 vt100' >> $ROOTFS/etc/inittab && \
-	echo 'ttyS1:2345:respawn:/sbin/getty -l /usr/local/bin/autologin 9600 ttyS1 vt100' >> $ROOTFS/etc/inittab
+    echo "/bin/login -f docker" >> $ROOTFS/usr/local/bin/autologin && \
+    chmod 755 $ROOTFS/usr/local/bin/autologin && \
+    echo 'ttyS0:2345:respawn:/sbin/getty -l /usr/local/bin/autologin 9600 ttyS0 vt100' >> $ROOTFS/etc/inittab && \
+    echo 'ttyS1:2345:respawn:/sbin/getty -l /usr/local/bin/autologin 9600 ttyS1 vt100' >> $ROOTFS/etc/inittab
 
 # fix "su -"
 RUN echo root > $ROOTFS/etc/sysconfig/superuser
 
 # add some timezone files so we're explicit about being UTC
 RUN echo 'UTC' > $ROOTFS/etc/timezone \
-	&& cp -L /usr/share/zoneinfo/UTC $ROOTFS/etc/localtime
+    && cp -L /usr/share/zoneinfo/UTC $ROOTFS/etc/localtime
 
 # Get the git versioning info
-COPY .git /git/.git
-RUN cd /git && \
-    GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && \
-    GITSHA1=$(git rev-parse --short HEAD) && \
-    DATE=$(date) && \
-    echo "${GIT_BRANCH} : ${GITSHA1} - ${DATE}" > $ROOTFS/etc/boot2docker
+RUN echo "master: 0137955 - Wed Jul 20 22:27:43 KST 2016" > $ROOTFS/etc/boot2docker
 
 # Copy boot params
 COPY rootfs/isolinux /tmp/iso/boot/isolinux
@@ -343,4 +224,4 @@ COPY rootfs/make_iso.sh /
 
 RUN /make_iso.sh
 
-CMD ["sh", "-c", "[ -t 1 ] && exec bash || exec cat boot2docker.iso"]
+#CMD ["sh", "-c", "[ -t 1 ] && exec bash || exec cat boot2docker.iso"]
