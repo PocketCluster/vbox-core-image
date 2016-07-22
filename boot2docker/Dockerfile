@@ -63,7 +63,8 @@ RUN cd $ROOTFS/lib/modules && \
     rm -rf ./*/kernel/net/wireless/*
 
 # Install libcap
-RUN curl -fL http://http.debian.net/debian/pool/main/libc/libcap2/libcap2_2.22.orig.tar.gz | tar -C / -xz && \
+COPY libcap2_2.22.orig.tar.gz /
+RUN tar xvzf libcap2_2.22.orig.tar.gz && \
     cd /libcap-2.22 && \
     sed -i 's/LIBATTR := yes/LIBATTR := no/' Make.Rules && \
     make && \
@@ -74,17 +75,29 @@ RUN curl -fL http://http.debian.net/debian/pool/main/libc/libcap2/libcap2_2.22.o
 
 # Make sure the kernel headers are installed for aufs-util, and then build it
 RUN cd /linux-kernel && \
-    make INSTALL_HDR_PATH=/tmp/kheaders headers_install && \
-    cd / && \
-    git clone https://github.com/Distrotech/aufs-util.git && \
+    make INSTALL_HDR_PATH=/tmp/kheaders headers_install
+COPY aufs-util.tar.gz /
+RUN mkdir /aufs-util && \
+    tar -xvzf aufs-util.tar.gz -C /aufs-util && \
     cd /aufs-util && \
-    git checkout 5e0c348bd8b1898beb1e043b026bcb0e0c7b0d54 && \
     CPPFLAGS="-I/tmp/kheaders/include" CLFAGS=$CPPFLAGS LDFLAGS=$CPPFLAGS make && \
     DESTDIR=$ROOTFS make install && \
     rm -rf /tmp/kheaders
 
+#RUN cd / && \
+#    git clone https://github.com/Distrotech/aufs-util.git && \
+#    cd /aufs-util && \
+#    git checkout 5e0c348bd8b1898beb1e043b026bcb0e0c7b0d54 && \
+#    CPPFLAGS="-I/tmp/kheaders/include" CLFAGS=$CPPFLAGS LDFLAGS=$CPPFLAGS make && \
+#    DESTDIR=$ROOTFS make install && \
+#    rm -rf /tmp/kheaders
+
 # Prepare the ISO directory with the kernel
 RUN cp -v /linux-kernel/arch/x86_64/boot/bzImage /tmp/iso/boot/vmlinuz64
+
+
+
+
 
 ENV TCL_REPO_BASE   http://tinycorelinux.net/7.x/x86_64
 # Note that the ncurses is here explicitly so that top continues to work
@@ -120,12 +133,28 @@ RUN set -ex && \
 # Install Tiny Core Linux rootfs
 RUN cd $ROOTFS && zcat /tcl_rootfs.gz | cpio -f -i -H newc -d --no-absolute-filenames
 
+
+
+
+
+
+
+
+
+
+
 # Apply horrible hacks
 RUN cd $ROOTFS && ln -s lib lib64
 
 # get generate_cert
 RUN curl -fL -o $ROOTFS/usr/local/bin/generate_cert https://github.com/SvenDowideit/generate_cert/releases/download/0.2/generate_cert-0.2-linux-amd64 && \
     chmod +x $ROOTFS/usr/local/bin/generate_cert
+
+
+
+
+
+
 
 # Build VBox guest additions
 ENV VBOX_VERSION 5.1.0
@@ -143,7 +172,7 @@ RUN set -x && \
     rm VBoxGuestAdditions*.tar.bz2 && \
     \
     KERN_DIR=/linux-kernel/ make -C amd64/src/vboxguest-${VBOX_VERSION} && \
-    cp amd64/src/vboxguest-${VBOX_VERSION}/*.ko $ROOTFS/lib/modules/$KERNEL_VERSION-boot2docker/ && \
+    cp amd64/src/vboxguest-${VBOX_VERSION}/*.ko $ROOTFS/lib/modules/$KERNEL_VERSION-PocketCluster/ && \
     \
     mkdir -p $ROOTFS/sbin && \
     cp amd64/lib/VBoxGuestAdditions/mount.vboxsf amd64/sbin/VBoxService $ROOTFS/sbin/ && \
@@ -157,7 +186,7 @@ RUN set -x && \
 #    chroot "$ROOTFS" VBoxService --version
 
 # Make sure that all the modules we might have added are recognized (especially VBox guest additions)
-RUN depmod -a -b $ROOTFS $KERNEL_VERSION-boot2docker
+RUN depmod -a -b $ROOTFS $KERNEL_VERSION-PocketCluster
 
 COPY VERSION $ROOTFS/etc/version
 RUN cp -v $ROOTFS/etc/version /tmp/iso/version
@@ -222,6 +251,6 @@ COPY rootfs/isolinux /tmp/iso/boot/isolinux
 
 COPY rootfs/make_iso.sh /
 
-RUN /make_iso.sh
+# RUN /make_iso.sh
 
-#CMD ["sh", "-c", "[ -t 1 ] && exec bash || exec cat boot2docker.iso"]
+# CMD ["sh", "-c", "[ -t 1 ] && exec bash || exec cat boot2docker.iso"]
