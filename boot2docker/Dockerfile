@@ -96,7 +96,7 @@ RUN mkdir /aufs-util && \
 RUN cp -v /linux-kernel/arch/x86_64/boot/bzImage /tmp/iso/boot/vmlinuz64
 
 
-
+#------------------------------ INSTALL TINYCORE ------------------------------
 
 
 ENV TCL_REPO_BASE   http://tinycorelinux.net/7.x/x86_64
@@ -133,16 +133,6 @@ RUN set -ex && \
 # Install Tiny Core Linux rootfs
 RUN cd $ROOTFS && zcat /tcl_rootfs.gz | cpio -f -i -H newc -d --no-absolute-filenames
 
-
-
-
-
-
-
-
-
-
-
 # Apply horrible hacks
 RUN cd $ROOTFS && ln -s lib lib64
 
@@ -150,9 +140,7 @@ RUN cd $ROOTFS && ln -s lib lib64
 RUN curl -fL -o $ROOTFS/usr/local/bin/generate_cert https://github.com/SvenDowideit/generate_cert/releases/download/0.2/generate_cert-0.2-linux-amd64 && \
     chmod +x $ROOTFS/usr/local/bin/generate_cert
 
-
-
-
+#------------------------------ COMPLETE INSTALL TINYCORE ------------------------------
 
 
 
@@ -191,7 +179,7 @@ RUN depmod -a -b $ROOTFS $KERNEL_VERSION-PocketCluster
 COPY VERSION $ROOTFS/etc/version
 RUN cp -v $ROOTFS/etc/version /tmp/iso/version
 
-# Get the Docker binaries with version that matches our boot2docker version.
+# Get the Docker binaries with version
 COPY docker-1.10.3.tgz /tmp 
 RUN cd /tmp && \
     tar -xvzf docker-1.10.3.tgz --strip-components=1 && \
@@ -210,7 +198,6 @@ RUN cd $ROOTFS \
     && ln -s /usr/local/sbin/ip usr/sbin/
 
 # These steps can only be run once, so can't be in make_iso.sh (which can be run in chained Dockerfiles)
-# see https://github.com/boot2docker/boot2docker/blob/master/doc/BUILD.md
 
 # Make sure init scripts are executable
 RUN find $ROOTFS/etc/rc.d/ $ROOTFS/usr/local/etc/init.d/ -exec chmod +x '{}' ';'
@@ -244,13 +231,9 @@ RUN echo 'UTC' > $ROOTFS/etc/timezone \
     && cp -L /usr/share/zoneinfo/UTC $ROOTFS/etc/localtime
 
 # Get the git versioning info
-RUN echo "master: 0137955 - Wed Jul 20 22:27:43 KST 2016" > $ROOTFS/etc/boot2docker
+COPY pocketcluster.info $ROOTFS/etc/pocketcluster.info
 
 # Copy boot params
 COPY rootfs/isolinux /tmp/iso/boot/isolinux
 
 COPY rootfs/make_iso.sh /
-
-# RUN /make_iso.sh
-
-# CMD ["sh", "-c", "[ -t 1 ] && exec bash || exec cat boot2docker.iso"]

@@ -18,19 +18,19 @@ ln -fs /usr/local/etc/init.d/docker $ROOTFS/etc/init.d/
 
 # Setup /etc/os-release with some nice contents
 b2dVersion="$(cat $ROOTFS/etc/version)" # something like "1.1.0"
-b2dDetail="$(cat $ROOTFS/etc/boot2docker)" # something like "master : 740106c - Tue Jul 29 03:29:25 UTC 2014"
+b2dDetail="$(cat $ROOTFS/etc/pocketcluster.info)" # something like "master : 740106c - Tue Jul 29 03:29:25 UTC 2014"
 tclVersion="$(cat $ROOTFS/usr/share/doc/tc/release.txt)" # something like "5.3"
 cat > $ROOTFS/etc/os-release <<-EOOS
-NAME=Boot2Docker
+NAME=PocketCluster
 VERSION=$b2dVersion
-ID=boot2docker
+ID=PocketCluster
 ID_LIKE=tcl
 VERSION_ID=$b2dVersion
-PRETTY_NAME="Boot2Docker $b2dVersion (TCL $tclVersion); $b2dDetail"
+PRETTY_NAME="PocketCluster $b2dVersion (TCL $tclVersion); $b2dDetail"
 ANSI_COLOR="1;34"
-HOME_URL="http://boot2docker.io"
-SUPPORT_URL="https://github.com/boot2docker/boot2docker"
-BUG_REPORT_URL="https://github.com/boot2docker/boot2docker/issues"
+HOME_URL="http://pocketcluster.io"
+SUPPORT_URL="https://github.com/stkim1/pocketcluster"
+BUG_REPORT_URL="https://github.com/stkim1/pocketcluster/issues"
 EOOS
 
 # Pack the rootfs
@@ -42,10 +42,10 @@ cd -
 # Note: only "-isohybrid-mbr /..." is specific to xorriso.
 # It builds an image that can be used as an ISO *and* a disk image.
 xorriso  \
-    -publisher "Docker Inc." \
+    -publisher "PocketCluster." \
     -as mkisofs \
-    -l -J -R -V "Boot2Docker-v$(cat $ROOTFS/etc/version)" \
+    -l -J -R -V "PocketCluster-v$(cat $ROOTFS/etc/version)" \
     -no-emul-boot -boot-load-size 4 -boot-info-table \
     -b boot/isolinux/isolinux.bin -c boot/isolinux/boot.cat \
     -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
-    -o /boot2docker.iso /tmp/iso
+    -o /pc-master.iso /tmp/iso
