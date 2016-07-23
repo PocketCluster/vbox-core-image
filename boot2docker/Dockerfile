@@ -74,11 +74,12 @@ RUN tar xvzf libcap2_2.22.orig.tar.gz && \
     cp -av `pwd`/output/lib64/* $ROOTFS/usr/local/lib
 
 # Make sure the kernel headers are installed for aufs-util, and then build it
+ENV AUFS_UTIL_COMMIT 5e0c348bd8b1898beb1e043b026bcb0e0c7b0d54
 RUN cd /linux-kernel && \
     make INSTALL_HDR_PATH=/tmp/kheaders headers_install
-COPY aufs-util-5e0c348bd8b1898beb1e043b026bcb0e0c7b0d54.tar.gz /
+COPY aufs-util-${AUFS_UTIL_COMMIT}.tar.gz /
 RUN mkdir /aufs-util && \
-    tar -xvzf aufs-util.tar.gz -C /aufs-util && \
+    tar -xvzf aufs-util-${AUFS_UTIL_COMMIT}.tar.gz -C /aufs-util && \
     cd /aufs-util && \
     CPPFLAGS="-I/tmp/kheaders/include" CLFAGS=$CPPFLAGS LDFLAGS=$CPPFLAGS make && \
     DESTDIR=$ROOTFS make install && \
