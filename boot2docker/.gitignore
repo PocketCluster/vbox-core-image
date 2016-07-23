@@ -10,4 +10,4 @@ nbproject
 *.sublime-project
 *.sublime-workspace
 # *.iso
-linux-kernel-aufs-4.4.13.tar.xz
+linux-kernel-*.tar.xz

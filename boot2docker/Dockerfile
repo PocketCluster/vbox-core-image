@@ -20,7 +20,7 @@ RUN apt-get update && apt-get -y install  unzip \
                         p7zip-full
 
 # https://www.kernel.org/
-ENV KERNEL_VERSION  4.4.13
+ENV KERNEL_VERSION  4.4.15
 
 COPY linux-kernel-aufs-${KERNEL_VERSION}.tar.xz /
 RUN cd / && \
@@ -76,21 +76,13 @@ RUN tar xvzf libcap2_2.22.orig.tar.gz && \
 # Make sure the kernel headers are installed for aufs-util, and then build it
 RUN cd /linux-kernel && \
     make INSTALL_HDR_PATH=/tmp/kheaders headers_install
-COPY aufs-util.tar.gz /
+COPY aufs-util-5e0c348bd8b1898beb1e043b026bcb0e0c7b0d54.tar.gz /
 RUN mkdir /aufs-util && \
     tar -xvzf aufs-util.tar.gz -C /aufs-util && \
     cd /aufs-util && \
     CPPFLAGS="-I/tmp/kheaders/include" CLFAGS=$CPPFLAGS LDFLAGS=$CPPFLAGS make && \
     DESTDIR=$ROOTFS make install && \
     rm -rf /tmp/kheaders
-
-#RUN cd / && \
-#    git clone https://github.com/Distrotech/aufs-util.git && \
-#    cd /aufs-util && \
-#    git checkout 5e0c348bd8b1898beb1e043b026bcb0e0c7b0d54 && \
-#    CPPFLAGS="-I/tmp/kheaders/include" CLFAGS=$CPPFLAGS LDFLAGS=$CPPFLAGS make && \
-#    DESTDIR=$ROOTFS make install && \
-#    rm -rf /tmp/kheaders
 
 # Prepare the ISO directory with the kernel
 RUN cp -v /linux-kernel/arch/x86_64/boot/bzImage /tmp/iso/boot/vmlinuz64
@@ -145,7 +137,7 @@ RUN curl -fL -o $ROOTFS/usr/local/bin/generate_cert https://github.com/SvenDowid
 
 
 # Build VBox guest additions
-ENV VBOX_VERSION 5.1.0
+ENV VBOX_VERSION 5.1.2
 RUN mkdir -p /vboxguest
 COPY VBoxGuestAdditions_${VBOX_VERSION}.iso /vboxguest
 RUN set -x && \
@@ -205,9 +197,6 @@ RUN find $ROOTFS/etc/rc.d/ $ROOTFS/usr/local/etc/init.d/ -exec chmod +x '{}' ';'
 # move dhcp.sh out of init.d as we're triggering it manually so its ready a bit faster
 RUN mv $ROOTFS/etc/init.d/dhcp.sh $ROOTFS/etc/rc.d/
 
-# Change MOTD
-RUN mv $ROOTFS/usr/local/etc/motd $ROOTFS/etc/motd
-
 # Make sure we have the correct bootsync
 RUN mv $ROOTFS/boot*.sh $ROOTFS/opt/ && \
     chmod +x $ROOTFS/opt/*.sh
@@ -229,6 +218,15 @@ RUN echo root > $ROOTFS/etc/sysconfig/superuser
 # add some timezone files so we're explicit about being UTC
 RUN echo 'UTC' > $ROOTFS/etc/timezone \
     && cp -L /usr/share/zoneinfo/UTC $ROOTFS/etc/localtime
+
+# make sure the "docker" group exists already
+RUN chroot "$ROOTFS" addgroup -S docker
+
+# set up subuid/subgid so that "--userns-remap=default" works out-of-the-box
+# (see also rootfs/rootfs/etc/sub{uid,gid})
+RUN set -x \
+    && chroot "$ROOTFS" addgroup -S dockremap \
+    && chroot "$ROOTFS" adduser -S -G dockremap dockremap
 
 # Get the git versioning info
 COPY pocketcluster.info $ROOTFS/etc/pocketcluster.info
