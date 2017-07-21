@@ -229,10 +229,11 @@ ENV GOLANG_VERSION "1.7.6"
 COPY go${GOLANG_VERSION}.linux-amd64.tar.gz /tmp
 RUN set -ex \
   && tar -xvzf /tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz -C "$ROOTFS/opt" \
-  && mkdir -p {/opt/gopkg/src,/opt/gopkg/pkg,/opt/gopkg/bin} \
-  && echo "export GOPATH=/opt/gopkg" >> $ROOTFS/etc/bash.bashrc \
-  && echo "export GOROOT=/opt/go" >> $ROOTFS/etc/bash.bashrc \
-  && echo "export PATH=\$GOROOT/bin:\$GOPATH/bin:\$PATH" >> $ROOTFS/etc/bash.bashrc
+  && mkdir -p /opt/gopkg \
+  && echo "" >> $ROOTFS/etc/profile \
+  && echo "export GOPATH=/opt/gopkg" >> $ROOTFS/etc/profile \
+  && echo "export GOROOT=/opt/go" >> $ROOTFS/etc/profile \
+  && echo "export PATH=\$GOROOT/bin:\$GOPATH/bin:\$PATH" >> $ROOTFS/etc/profile
 
 # Remove used deps
 RUN set -ex \
