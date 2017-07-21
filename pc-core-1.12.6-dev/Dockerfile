@@ -209,7 +209,7 @@ RUN set -x && \
 
 
 # Make sure that all the modules we might have added are recognized (especially VBox guest additions)
-RUN depmod -a -b "$ROOTFS" "$KERNEL_VERSION-boot2docker"
+RUN depmod -a -b "$ROOTFS" "$KERNEL_VERSION"
 
 COPY VERSION $ROOTFS/etc/version
 RUN cp -v "$ROOTFS/etc/version" /tmp/iso/version

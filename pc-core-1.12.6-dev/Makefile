@@ -1,8 +1,8 @@
 build: | output
 	docker build -t pc-core .
-#	docker run -it --name pc-core -v ${PWD}/output:/tmp/output pc-core /make_iso.sh
-	docker cp pc-core:/boot2docker.iso output/
-#	docker rm boot2docker
+	docker run --name pc-core -v ${PWD}/output:/tmp/output pc-core /bin/bash
+	docker cp pc-core:/boot2docker.iso ${PWD}/output/
+	docker rm pc-core
 
 output:
 	mkdir -p $@
