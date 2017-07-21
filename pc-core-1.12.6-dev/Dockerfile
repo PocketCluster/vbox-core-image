@@ -291,4 +291,4 @@ COPY rootfs/make_iso.sh /tmp/make_iso.sh
 
 RUN /tmp/make_iso.sh
 
-CMD ["sh", "-c", "[ -t 1 ] && exec bash || exec cat boot2docker.iso"]
+# CMD ["sh", "-c", "[ -t 1 ] && exec bash || exec cat boot2docker.iso"]
