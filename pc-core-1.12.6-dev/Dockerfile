@@ -207,8 +207,6 @@ RUN set -x && \
 #    chroot "$ROOTFS" VBoxControl --version && \
 #    chroot "$ROOTFS" VBoxService --version
 
-# Build the Hyper-V KVP Daemon <- disabled as this iso won't be running on Hyper-V https://github.com/boot2docker/boot2docker/pull/595
-
 
 # Make sure that all the modules we might have added are recognized (especially VBox guest additions)
 RUN depmod -a -b "$ROOTFS" "$KERNEL_VERSION-boot2docker"
@@ -224,16 +222,6 @@ RUN set -ex \
 	&& tar -xvzf /tmp/docker-${DOCKER_VERSION}.tgz -C "$ROOTFS/usr/local/bin" --strip-components=1 \
 	&& rm /tmp/docker-${DOCKER_VERSION}.tgz \
 	&& chroot "$ROOTFS" docker -v
-
-ENV GOLANG_VERSION "1.7.6"
-COPY go${GOLANG_VERSION}.linux-amd64.tar.gz /tmp
-RUN set -ex \
-  && tar -xvzf /tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz -C "$ROOTFS/opt" \
-  && mkdir -p /opt/gopkg \
-  && echo "" >> $ROOTFS/etc/profile \
-  && echo "export GOPATH=/opt/gopkg" >> $ROOTFS/etc/profile \
-  && echo "export GOROOT=/opt/go" >> $ROOTFS/etc/profile \
-  && echo "export PATH=\$GOROOT/bin:\$GOPATH/bin:\$PATH" >> $ROOTFS/etc/profile
 
 # Remove used deps
 RUN set -ex \
