@@ -1,8 +1,12 @@
-# Boot2Docker -> PocketCore ToDo 
+# Boot2Docker -> PocketCore ToDo
 
-## Kernel 
+## Kernel
 
-- [ ] Kernel Config & Rename
+- [x] Kernel Config & Rename
+
+## Build
+
+- [x] `Makefile` to extract iso
 
 
 ## Network
