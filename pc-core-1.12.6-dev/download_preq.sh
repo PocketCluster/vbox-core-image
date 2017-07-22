@@ -83,6 +83,6 @@ curl -fSL -o ${PWD}/docker-${DOCKER_VERSION}.tgz "https://get.docker.com/builds/
 
 
 # --- Get GoLang ---
-export GOLANG_VERSION=${GOLANG_VERSION:="1.7.6"}
-
-curl -fSL -o ${PWD}/go${GOLANG_VERSION}.linux-amd64.tar.gz  "https://storage.googleapis.com/golang/go${GOLANG_VERSION}.linux-amd64.tar.gz"
+#export GOLANG_VERSION=${GOLANG_VERSION:="1.7.6"}
+#
+#curl -fSL -o ${PWD}/go${GOLANG_VERSION}.linux-amd64.tar.gz  "https://storage.googleapis.com/golang/go${GOLANG_VERSION}.linux-amd64.tar.gz"
