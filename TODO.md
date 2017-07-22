@@ -9,6 +9,16 @@
 - [x] `Makefile` to extract iso
 
 
+## Boot
+
+- [ ] ISOLINUX
+  * what is `isolinux` ?
+  * isolinux.cfg
+  * boot.msg
+  * default : boo2docker
+  * label boot2docker
+
+
 ## Network
 
 - [ ] Remove SSH connection
@@ -20,17 +30,7 @@
 - [ ] `${ROOTFS}/etc/boot2docker` rename
 
 
-## Boot
-
-- [ ] ISOLINUX
-  * what is `isolinux` ?
-  * isolinux.cfg
-  * boot.msg
-  * default : boo2docker
-  * label boot2docker
-
 ## Rootfs
-
 
 
 ## Utils
