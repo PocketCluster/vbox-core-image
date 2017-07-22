@@ -3,6 +3,9 @@
 ## Kernel
 
 - [x] Kernel Config & Rename
+ * `CONFIG_DEFAULT_HOSTNAME` is set to `pc-core`
+ * `CONFIG_LOCALVERSION` is not set
+ * `CONFIG_VXLAN=y` (VXLAN for container cluster network)
 
 ## Build
 
@@ -44,6 +47,7 @@
 
 - [ ] Remove SSH connection
 - [ ] Remove IP command
+- [ ] Remove Serial Access
 
 
 ## Utils
