@@ -1,9 +1,11 @@
 build: | output
+	cp -rf ../.git .
 	docker build -t pc-core .
 	docker run -it --name pc-core -v ${PWD}/output:/tmp/output pc-core /tmp/make_iso.sh
-	docker cp pc-core:/boot2docker.iso ${PWD}/output/
+	docker cp pc-core:/pc-core.iso ${PWD}/output/
 	docker rm pc-core
 	docker rmi pc-core
+	rm -rf .git
 
 output:
 	mkdir -p $@

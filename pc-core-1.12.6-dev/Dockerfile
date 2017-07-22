@@ -275,20 +275,19 @@ RUN set -x \
 	&& chroot "$ROOTFS" adduser -S -G dockremap dockremap
 
 # Get the git versioning info
-#COPY .git /git/.git
-#RUN set -ex \
-#	&& GIT_BRANCH="$(git -C /git rev-parse --abbrev-ref HEAD)" \
-#	&& GITSHA1="$(git -C /git rev-parse --short HEAD)" \
-#	&& DATE="$(date)" \
-#	&& echo "${GIT_BRANCH} : ${GITSHA1} - ${DATE}" \
-#		| tee "$ROOTFS/etc/boot2docker"
-RUN touch "$ROOTFS/etc/boot2docker"
+COPY .git /git/.git
+RUN set -ex \
+	&& GIT_BRANCH="$(git -C /git rev-parse --abbrev-ref HEAD)" \
+	&& GITSHA1="$(git -C /git rev-parse --short HEAD)" \
+	&& DATE="$(date)" \
+	&& echo "${GIT_BRANCH} : ${GITSHA1} - ${DATE}" \
+		| tee "$ROOTFS/etc/pc-core"
 
 # Copy boot params
 COPY rootfs/isolinux /tmp/iso/boot/isolinux
 
 COPY rootfs/make_iso.sh /tmp/make_iso.sh
 
-# Following two steps are separated in Makefile 
+# Following two steps are separated in Makefile
 #RUN /tmp/make_iso.sh
 #CMD ["sh", "-c", "[ -t 1 ] && exec bash || exec cat boot2docker.iso"]

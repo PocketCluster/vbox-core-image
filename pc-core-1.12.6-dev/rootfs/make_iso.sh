@@ -17,20 +17,20 @@ ln -fs /var/lib/boot2docker/docker.log $ROOTFS/var/log/
 ln -fs /usr/local/etc/init.d/docker $ROOTFS/etc/init.d/
 
 # Setup /etc/os-release with some nice contents
-b2dVersion="$(cat $ROOTFS/etc/version)" # something like "1.1.0"
-b2dDetail="$(cat $ROOTFS/etc/boot2docker)" # something like "master : 740106c - Tue Jul 29 03:29:25 UTC 2014"
+pccVersion="$(cat $ROOTFS/etc/version)" # something like "1.1.0"
+pccDetail="$(cat $ROOTFS/etc/pc-core)" # something like "master : 740106c - Tue Jul 29 03:29:25 UTC 2014"
 tclVersion="$(cat $ROOTFS/usr/share/doc/tc/release.txt)" # something like "5.3"
 cat > $ROOTFS/etc/os-release <<-EOOS
-NAME=Boot2Docker
-VERSION=$b2dVersion
-ID=boot2docker
+NAME=PocketCluster Core
+VERSION=$pccVersion
+ID=pc-core
 ID_LIKE=tcl
-VERSION_ID=$b2dVersion
-PRETTY_NAME="Boot2Docker $b2dVersion (TCL $tclVersion); $b2dDetail"
+VERSION_ID=$pccVersion
+PRETTY_NAME="PocketCluster Core $pccVersion (TCL $tclVersion); $pccDetail"
 ANSI_COLOR="1;34"
-HOME_URL="http://boot2docker.io"
-SUPPORT_URL="https://github.com/boot2docker/boot2docker"
-BUG_REPORT_URL="https://github.com/boot2docker/boot2docker/issues"
+HOME_URL="http://pocketcluster.io"
+SUPPORT_URL="https://github.com/stkim1/pocketcluster"
+BUG_REPORT_URL="https://github.com/stkim1/pocketcluster/issues"
 EOOS
 
 # Pack the rootfs
@@ -42,10 +42,10 @@ cd -
 # Note: only "-isohybrid-mbr /..." is specific to xorriso.
 # It builds an image that can be used as an ISO *and* a disk image.
 xorriso  \
-    -publisher "Docker Inc." \
+    -publisher "PocketCluster" \
     -as mkisofs \
-    -l -J -R -V "b2d-v$(cat $ROOTFS/etc/version)" \
+    -l -J -R -V "pcc-v$(cat $ROOTFS/etc/version)" \
     -no-emul-boot -boot-load-size 4 -boot-info-table \
     -b boot/isolinux/isolinux.bin -c boot/isolinux/boot.cat \
     -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
-    -o /boot2docker.iso /tmp/iso
+    -o /pc-core.iso /tmp/iso
