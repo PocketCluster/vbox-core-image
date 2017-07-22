@@ -9,7 +9,7 @@
 - [x] `Makefile` to extract iso
 
 
-## ISO builds
+## ISO builds (`/make_iso.sh`)
 
 - [x] Incorporated `.git` information to `/etc/pc-core` detail
 - [x] Keep some handy symlinks (so these things are easier to find).
@@ -33,8 +33,12 @@
 
 ## Rootfs
 - [x] Rebrand `/opt/bootsync.sh`
+- [x] Rebrand `/opt/shutdown.sh`
 - [x] Rebrand `/etc/profile.d/boot2docer` -> `/etc/profile.d/pc-core`
   * Can we remove it?
+
+- [x] Remove Parallels (prltoolsd)/ Xen (xedaemon)/ VMWare (vmtoolsd)/ Hyper-V KVP Supports
+- [x] Remove `/rootfs/etc/rc.d/automated_script.sh`
 
 ## Network
 
