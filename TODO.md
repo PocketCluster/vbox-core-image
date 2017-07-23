@@ -53,3 +53,11 @@
 ## Utils
 
 - [ ] Remove Serial Console
+
+
+## Certificate to Disk
+
+- [x] Pre-generate Cluster ID
+- [x] Pre-generate Teleport HostUUID
+- [x] Pre-generate TCP TLS AUTHCERT/KEYCERTS/PRVKEY
+- [x] Save Certs to VBOX Core Node
