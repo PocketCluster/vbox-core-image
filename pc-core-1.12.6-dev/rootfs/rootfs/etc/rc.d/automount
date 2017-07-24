@@ -19,7 +19,7 @@ if [ ! -n "$BOOT2DOCKER_DATA" ]; then
 
         if [ "$HEADER" = "$MAGIC" ]; then
             # save the preload userdata.tar file
-            dd if=$UNPARTITIONED_HD of=/userdata.tar bs=1 count=4096 2>/dev/null
+            dd if=$UNPARTITIONED_HD of=/userdata.tar bs=1 count=25600 2>/dev/null
             # Create the partition, format it and then mount it
             echo "NEW boot2docker managed disk image ($UNPARTITIONED_HD): formatting it for use"
             echo "NEW boot2docker managed disk image ($UNPARTITIONED_HD): formatting it for use" > /home/docker/log.log
