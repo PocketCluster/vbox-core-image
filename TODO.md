@@ -42,6 +42,13 @@
 
 - [x] Remove Parallels (prltoolsd)/ Xen (xedaemon)/ VMWare (vmtoolsd)/ Hyper-V KVP Supports
 - [x] Remove `/rootfs/etc/rc.d/automated_script.sh`
+- [x] Remove `/etc/rc.d/sshd`
+- [ ] Clean up `/etc/rc.d/automount`
+  * Remove _VMWare partition mount_ part
+
+- [ ] Clean up `/opt/bootscript.sh`
+  * extract `userdata.tar` to /
+  * Remove `/etc/rc.d/sshd`
 
 ## Network
 
@@ -61,3 +68,4 @@
 - [x] Pre-generate Teleport HostUUID
 - [x] Pre-generate TCP TLS AUTHCERT/KEYCERTS/PRVKEY
 - [x] Save Certs to VBOX Core Node
+- [x] Add Username

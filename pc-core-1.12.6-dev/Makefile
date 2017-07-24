@@ -4,7 +4,7 @@ build: | output
 	docker run -it --name pc-core -v ${PWD}/output:/tmp/output pc-core /tmp/make_iso.sh
 	docker cp pc-core:/pc-core.iso ${PWD}/output/
 	docker rm pc-core
-	docker rmi pc-core
+#	docker rmi pc-core
 	rm -rf .git
 
 output:
