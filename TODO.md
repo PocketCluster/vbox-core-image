@@ -54,6 +54,8 @@
 - [x] Remove `/rootfs/etc/rc.d/automated_script.sh`
 - [x] Remove `/etc/rc.d/sshd`
 
+- [x] Disable IPv6 `/etc/rc.d/sysctl.conf`
+
 
 #### `/opt/bootsync.sh`
 
