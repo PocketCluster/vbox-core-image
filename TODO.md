@@ -89,6 +89,7 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 
 - [x] Change the magic word to `pc-core, please format-me`
 - [x] Remove _VMWare partition mount_ part
+- [ ] Formalize swap space size
 - [x] Remove old way of using persistent hdd (line 81)
 
   ```diff

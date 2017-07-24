@@ -37,8 +37,8 @@ test -f "/var/lib/boot2docker/profile" && . "/var/lib/boot2docker/profile"
 
 # Preload data from disk
 if [ -e "/var/lib/boot2docker/userdata.tar" ]; then
-    tar xvf /var/lib/boot2docker/userdata.tar -C / > /var/log/userdata.log 2>&1
-    rm -f '/pc-core, please format-me'
+    tar xvf /var/lib/boot2docker/userdata.tar -C /etc/pocket > /var/log/userdata.log 2>&1
+    rm -f '/etc/pocket/pc-core, please format-me'
     # since userdata is now persisted, we can safely remove it
     rm -f /var/lib/boot2docker/userdata.tar
 fi
