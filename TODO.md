@@ -28,8 +28,13 @@
 ## ISOLINUX
 
 - [x] Rebrand logo `/rootfs/isolinux/boot.msg`
+- [ ] Bootcode changed
+
+  * `label pc-core`
+  * `waitusb=10:LABEL=pc-core-data`
 - [ ] Remove Serial Console
 - [ ] ISOLINUX
+
   * what is `isolinux` ?
   * isolinux.cfg
   * boot.msg
@@ -106,9 +111,9 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 
 ## Network
 
-- [ ] Remove SSH Daemon
-- [ ] Remove IP command
 - [ ] Remove Serial Access
+- [ ] Remove SSH Daemon
+- [ ] Remove `ip` command
 
 
 ## Certificate to Disk
@@ -120,3 +125,17 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 - [x] Add Username
 - [x] Pre-generate TCP TLS AUTHCERT/KEYCERTS/PRVKEY
 - [ ] Pre-generate Docker TLS AUTHCERT/KEYCERTS/PRVKEY
+
+
+## Boot
+
+- [ ] Segfault for disable ipv6
+
+
+## Backport to PocketCluster Node
+
+- [ ] TinyCore
+- [ ] Repartition
+- [ ] User Namespace Remap
+  * <https://docs.oracle.com/cd/E37670_01/E75728/html/ol-docker-userns-remap.html>
+  * <https://docs.docker.com/edge/engine/reference/commandline/dockerd/#daemon-user-namespace-options>
