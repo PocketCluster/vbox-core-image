@@ -24,8 +24,9 @@
 - [x] `${ROOTFS}/etc/boot2docker` -> `${ROOTFS}/etc/pc-core`
 
 
-## Boot
+## ISOLINUX
 
+- [x] Rebrand logo `/rootfs/isolinux/boot.msg`
 - [ ] ISOLINUX
   * what is `isolinux` ?
   * isolinux.cfg
@@ -35,6 +36,7 @@
 
 
 ## Rootfs
+
 - [x] Rebrand `/opt/bootsync.sh`
 - [x] Rebrand `/opt/shutdown.sh`
 - [x] Rebrand `/etc/profile.d/boot2docker` -> `/etc/profile.d/pc-core` (**Can we remove it?**)
