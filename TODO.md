@@ -37,22 +37,26 @@
 ## Rootfs
 - [x] Rebrand `/opt/bootsync.sh`
 - [x] Rebrand `/opt/shutdown.sh`
-- [x] Rebrand `/etc/profile.d/boot2docer` -> `/etc/profile.d/pc-core`
-  * Can we remove it?
+- [x] Rebrand `/etc/profile.d/boot2docker` -> `/etc/profile.d/pc-core` (**Can we remove it?**)
+- [x] Rebrand `/usr/local/etc/hostname` : boot2docker -> pc-core
+- [x] Rebrand `/etc/motd`
 
 - [x] Remove Parallels (prltoolsd)/ Xen (xedaemon)/ VMWare (vmtoolsd)/ Hyper-V KVP Supports
 - [x] Remove `/rootfs/etc/rc.d/automated_script.sh`
 - [x] Remove `/etc/rc.d/sshd`
+
 - [ ] Clean up `/etc/rc.d/automount`
   * Remove _VMWare partition mount_ part
 
 - [ ] Clean up `/opt/bootscript.sh`
   * extract `userdata.tar` to /
   * Remove `/etc/rc.d/sshd`
+  * Remove customization
+
 
 ## Network
 
-- [ ] Remove SSH connection
+- [ ] Remove SSH Daemon
 - [ ] Remove IP command
 - [ ] Remove Serial Access
 
@@ -66,6 +70,6 @@
 
 - [x] Pre-generate Cluster ID
 - [x] Pre-generate Teleport HostUUID
-- [x] Pre-generate TCP TLS AUTHCERT/KEYCERTS/PRVKEY
-- [x] Save Certs to VBOX Core Node
 - [x] Add Username
+- [x] Pre-generate TCP TLS AUTHCERT/KEYCERTS/PRVKEY
+- [ ] Pre-generate Docker TLS AUTHCERT/KEYCERTS/PRVKEY
