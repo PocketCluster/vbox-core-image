@@ -7,6 +7,7 @@
  * `CONFIG_LOCALVERSION` is not set
  * `CONFIG_VXLAN=y` (VXLAN for container cluster network)
 
+
 ## Build
 
 - [x] `Makefile` to extract iso
@@ -27,6 +28,7 @@
 ## ISOLINUX
 
 - [x] Rebrand logo `/rootfs/isolinux/boot.msg`
+- [ ] Remove Serial Console
 - [ ] ISOLINUX
   * what is `isolinux` ?
   * isolinux.cfg
@@ -47,13 +49,58 @@
 - [x] Remove `/rootfs/etc/rc.d/automated_script.sh`
 - [x] Remove `/etc/rc.d/sshd`
 
-- [ ] Clean up `/etc/rc.d/automount`
-  * Remove _VMWare partition mount_ part
 
-- [ ] Clean up `/opt/bootscript.sh`
-  * extract `userdata.tar` to /
-  * Remove `/etc/rc.d/sshd`
-  * Remove customization
+#### `/opt/bootsync.sh`
+
+TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/rc.d/*`
+
+> If you want commands executed every time you start the computer, add them to /opt/bootsync.sh or /opt/bootlocal.sh.  
+> /opt/bootsync.sh is run early in the boot process.  
+> /opt/bootlocal.sh is run later in the boot process.  
+> Most commands should go in /opt/bootlocal.sh, except commands you want executed early in the boot process.  
+- <http://wiki.tinycorelinux.net/wiki:bootlocal.sh_and_shutdown.sh>  
+
+
+#### `/opt/bootscript.sh`
+
+- [x] Extract `userdata.tar` to /
+- [x] Remove `/etc/rc.d/sshd`
+- [x] Remove custom bootsync
+
+  ```diff
+  -# Allow local bootsync.sh customisation
+  -if [ -e /var/lib/boot2docker/bootsync.sh ]; then
+  -    /bin/sh /var/lib/boot2docker/bootsync.sh
+  -    echo "------------------- ran /var/lib/boot2docker/bootsync.sh"
+  -fi
+  ```
+- [x] Remove custom hdd
+
+  ```diff
+  -# Allow local HD customisation
+  -if [ -e /var/lib/boot2docker/bootlocal.sh ]; then
+  -    /bin/sh /var/lib/boot2docker/bootlocal.sh > /var/log/bootlocal.log 2>&1 &
+  -    echo "------------------- ran /var/lib/boot2docker/bootlocal.sh"
+  -fi
+  ```
+
+
+#### `/etc/rc.d/automount`
+
+- [x] Change the magic word to `pc-core, please format-me`
+- [x] Remove _VMWare partition mount_ part
+- [x] Remove old way of using persistent hdd (line 81)
+
+  ```diff
+  -    if [ -d /mnt/$PARTNAME/vm ]; then
+  -        # The old behavior - use the entire disk for boot2docker data
+  -        ln -s /mnt/$PARTNAME /var/lib/docker
+
+  -        # Give us a link to the new cusomisation location
+  -        ln -s /var/lib/docker/vm /var/lib/boot2docker
+  -    else
+  ```
+- [x] link to /etc/pocket -> /mnt/$PARTNAME/etc/pocket
 
 
 ## Network
@@ -63,13 +110,10 @@
 - [ ] Remove Serial Access
 
 
-## Utils
-
-- [ ] Remove Serial Console
-
-
 ## Certificate to Disk
 
+- [x] Extraction target patch changed to `/` that we can extract anything
+- [x] Change the magic word to `pc-core, please format-me`
 - [x] Pre-generate Cluster ID
 - [x] Pre-generate Teleport HostUUID
 - [x] Add Username

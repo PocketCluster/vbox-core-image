@@ -35,6 +35,14 @@ test -f "/var/lib/boot2docker/profile" && . "/var/lib/boot2docker/profile"
 # start cron
 /etc/rc.d/crond
 
+# Preload data from disk
+if [ -e "/var/lib/boot2docker/userdata.tar" ]; then
+    tar xvf /var/lib/boot2docker/userdata.tar -C / > /var/log/userdata.log 2>&1
+    rm -f '/pc-core, please format-me'
+    # since userdata is now persisted, we can safely remove it
+    rm -f /var/lib/boot2docker/userdata.tar
+fi
+
 # TODO: move this (and the docker user creation&pwd out to its own over-rideable?))
 if grep -q '^docker:' /etc/passwd; then
     # if we have the docker user, let's add it do the docker group
@@ -62,17 +70,8 @@ date
 ip a
 echo "-------------------"
 
-# Allow local bootsync.sh customisation
-if [ -e /var/lib/boot2docker/bootsync.sh ]; then
-    /bin/sh /var/lib/boot2docker/bootsync.sh
-    echo "------------------- ran /var/lib/boot2docker/bootsync.sh"
-fi
+# Launch PocketD
+
 
 # Launch Docker
 /etc/rc.d/docker
-
-# Allow local HD customisation
-if [ -e /var/lib/boot2docker/bootlocal.sh ]; then
-    /bin/sh /var/lib/boot2docker/bootlocal.sh > /var/log/bootlocal.log 2>&1 &
-    echo "------------------- ran /var/lib/boot2docker/bootlocal.sh"
-fi
