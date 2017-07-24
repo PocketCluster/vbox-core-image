@@ -113,7 +113,7 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 
 ## Certificate to Disk
 
-- [x] Extraction target patch changed to `/` that we can extract anything
+- [x] Extraction target patch changed to `/etc/pocket`
 - [x] Change the magic word to `pc-core, please format-me`
 - [x] Pre-generate Cluster ID
 - [x] Pre-generate Teleport HostUUID
