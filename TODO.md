@@ -154,10 +154,9 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 
 - [ ] TinyCore
 - [ ] Repartition
-- [ ] User Namespace Remap
-
-  * <https://docs.oracle.com/cd/E37670_01/E75728/html/ol-docker-userns-remap.html>
-  * <https://docs.docker.com/edge/engine/reference/commandline/dockerd/#daemon-user-namespace-options>
 - [ ] Disable Docker when there is no TLS certs available
 - [ ] Append 'CA' <http://rt.openssl.org/Ticket/History.html?user=guest&pass=guest&id=3979>
 - [ ] Run `dockerd` with script and check conditions there.
+- [ ] User Namespace Remap
+  * <https://docs.oracle.com/cd/E37670_01/E75728/html/ol-docker-userns-remap.html>
+  * <https://docs.docker.com/edge/engine/reference/commandline/dockerd/#daemon-user-namespace-options>
