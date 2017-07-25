@@ -16,9 +16,9 @@ test -f '/var/lib/boot2docker/profile' && . '/var/lib/boot2docker/profile'
 : ${CLUSTER_ID_FILE:="/etc/pocket/cluster.id"}
 
 : ${CERTDIR:=/etc/pocket/pki/}
-: ${CACERT:="${CERTDIR}pc_core_tls.acr"}
-: ${CERT:="${CERTDIR}pc_core_tls.crt"}
-: ${KEY:="${CERTDIR}pc_core_tls.pem"} 
+: ${CACERT:="${CERTDIR}pc_core_engine.acr"}
+: ${CERT:="${CERTDIR}pc_core_engine.crt"}
+: ${KEY:="${CERTDIR}pc_core_engine.pem"} 
 
 # Add /usr/local/sbin to the path.
 export PATH=${PATH}:/usr/local/sbin

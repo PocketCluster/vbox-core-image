@@ -167,3 +167,4 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
   * <https://docs.docker.com/edge/engine/reference/commandline/dockerd/#daemon-user-namespace-options>
 - [ ] Disable Docker when there is no TLS certs available
 - [ ] Append 'CA' <http://rt.openssl.org/Ticket/History.html?user=guest&pass=guest&id=3979>
+- [ ] Run `dockerd` with script and check conditions there.
