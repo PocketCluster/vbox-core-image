@@ -123,13 +123,13 @@ ENV TCL_REPO_BASE   http://distro.ibiblio.org/tinycorelinux/7.x/x86_64
 # Note that the ncurses is here explicitly so that top continues to work
 ENV TCZ_DEPS        iptables \
                     iproute2 \
-                    openssh openssl \
+                    openssl \
                     tar \
                     gcc_libs \
                     ncurses \
                     acpid \
                     xz liblzma \
-                    git expat2 libgpg-error libgcrypt libssh2 \
+                    git expat2 libgpg-error libgcrypt \
                     nfs-utils tcp_wrappers portmap rpcbind libtirpc \
                     rsync attr acl \
                     curl ntpclient \

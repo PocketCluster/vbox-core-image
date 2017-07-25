@@ -8,10 +8,10 @@
  * `CONFIG_VXLAN=y` (VXLAN for container cluster network)
 
 
-## Build
+## Build (Dockerfile + Makefile)
 
 - [x] `Makefile` to extract iso
-
+- [x] [`openssh`](doc/openssh.tcz.info), [`libssh2`](doc/libssh2.tcz.info) removed from TinyCore Extension list
 
 ## ISO builds (`/make_iso.sh`)
 
