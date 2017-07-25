@@ -91,18 +91,18 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 - [x] Remove `docker` user handling
 
   ```diff
-  # TODO: move this (and the docker user creation&pwd out to its own over-rideable?))
-  if grep -q '^docker:' /etc/passwd; then
-      # if we have the docker user, let's add it do the docker group
-      /bin/addgroup docker docker
-
-      #preload data from boot2docker-cli
-      if [ -e "/var/lib/boot2docker/userdata.tar" ]; then
-          tar xf /var/lib/boot2docker/userdata.tar -C / > /var/log/userdata.log 2>&1
-          rm -f '/home/docker/boot2docker, please format-me'
-          chown -R docker:staff /home/docker
-      fi
-  fi
+  -# TODO: move this (and the docker user creation&pwd out to its own over-rideable?))
+  -if grep -q '^docker:' /etc/passwd; then
+  -    # if we have the docker user, let's add it do the docker group
+  -    /bin/addgroup docker docker
+  -
+  -    #preload data from boot2docker-cli
+  -    if [ -e "/var/lib/boot2docker/userdata.tar" ]; then
+  -        tar xf /var/lib/boot2docker/userdata.tar -C / > /var/log/userdata.log 2>&1
+  -        rm -f '/home/docker/boot2docker, please format-me'
+  -        chown -R docker:staff /home/docker
+  -    fi
+  -fi
   ```
 - [x] Add Core User creation from `/etc/pocket/core.user.name`
 
