@@ -133,6 +133,11 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 - [ ] Remove `ip` command
 
 
+## Misc
+
+- [ ] Remove autologin
+- [ ] Remove forgiving-getty
+
 ## Certificate to Disk
 
 - [x] Extraction target patch changed to `/etc/pocket`
