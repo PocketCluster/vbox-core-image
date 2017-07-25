@@ -27,19 +27,17 @@
 
 ## ISOLINUX
 
+- [x] What is SYSLINUX
+
+  * <http://www.syslinux.org/wiki/index.php?title=SYSLINUX#What_is_SYSLINUX.3F>
+  * `isolinux.cfg` <http://www.tinycorelinux.net/corebook.pdf>
 - [x] Rebrand logo `/rootfs/isolinux/boot.msg`
 - [ ] Bootcode changed
 
-  * `label pc-core`
-  * `waitusb=10:LABEL=pc-core-data`
+  * `label pc-core` become default
+  * `waitusb=10:LABEL=pc-core-data` (wait 10s for `pc-core-data` volume)
+  * ~~`user=docker`~~ (create & default user : `docker`)
 - [ ] Remove Serial Console
-- [ ] ISOLINUX
-
-  * what is `isolinux` ?
-  * isolinux.cfg
-  * boot.msg
-  * default : boo2docker
-  * label boot2docker
 
 
 ## Rootfs
@@ -90,6 +88,23 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
   -    echo "------------------- ran /var/lib/boot2docker/bootlocal.sh"
   -fi
   ```
+- [x] Remove `docker` user handling
+
+  ```diff
+  # TODO: move this (and the docker user creation&pwd out to its own over-rideable?))
+  if grep -q '^docker:' /etc/passwd; then
+      # if we have the docker user, let's add it do the docker group
+      /bin/addgroup docker docker
+
+      #preload data from boot2docker-cli
+      if [ -e "/var/lib/boot2docker/userdata.tar" ]; then
+          tar xf /var/lib/boot2docker/userdata.tar -C / > /var/log/userdata.log 2>&1
+          rm -f '/home/docker/boot2docker, please format-me'
+          chown -R docker:staff /home/docker
+      fi
+  fi
+  ```
+- [x] Add Core User creation from `/etc/pocket/core.user.name`
 
 
 #### `/etc/rc.d/automount`
