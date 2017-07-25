@@ -126,6 +126,7 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 ## Misc
 
 - [x] Remove SSH Daemon
+- [ ] Fix network interface order
 - [ ] Remove Serial Access
 - [ ] Remove `ip` command
 - [ ] Remove autologin
