@@ -89,6 +89,7 @@ if [ -n "$BOOT2DOCKER_DATA" ]; then
 
     # Make sure Pocket Daemon data is to persist
     mkdir -p /mnt/$PARTNAME/var/lib/boot2docker/etc/pocket
+    chmod 0700 /mnt/$PARTNAME/var/lib/boot2docker/etc/pocket
     ln -s /mnt/$PARTNAME/var/lib/boot2docker/etc/pocket /etc/pocket
 
     # Make sure /tmp is on the disk too too
