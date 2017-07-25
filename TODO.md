@@ -1,5 +1,12 @@
 # Boot2Docker -> PocketCore ToDo
 
+
+## Build (Dockerfile + Makefile)
+
+- [x] `Makefile` to extract iso
+- [x] [`openssh`](doc/openssh.tcz.info), [`libssh2`](doc/libssh2.tcz.info) removed from TinyCore Extension list
+
+
 ## Kernel
 
 - [x] Kernel Config & Rename
@@ -8,18 +15,12 @@
  * `CONFIG_VXLAN=y` (VXLAN for container cluster network)
 
 
-## Build (Dockerfile + Makefile)
-
-- [x] `Makefile` to extract iso
-- [x] [`openssh`](doc/openssh.tcz.info), [`libssh2`](doc/libssh2.tcz.info) removed from TinyCore Extension list
-
 ## ISO builds (`/make_iso.sh`)
 
 - [x] Incorporated `.git` information to `/etc/pc-core` detail
 - [x] Keep some handy symlinks (so these things are easier to find).
   * `ln -fs /var/lib/boot2docker/docker.log $ROOTFS/var/log/`
   * `ln -fs /usr/local/etc/init.d/docker $ROOTFS/etc/init.d/`
-
 - [x] Rebrand ISO to `PocketCluster Core`
 - [x] Rename ISO name to `pc-core`
 - [x] `${ROOTFS}/etc/boot2docker` -> `${ROOTFS}/etc/pc-core`
@@ -28,12 +29,10 @@
 ## ISOLINUX
 
 - [x] What is SYSLINUX
-
   * <http://www.syslinux.org/wiki/index.php?title=SYSLINUX#What_is_SYSLINUX.3F>
   * `isolinux.cfg` <http://www.tinycorelinux.net/corebook.pdf>
 - [x] Rebrand logo `/rootfs/isolinux/boot.msg`
 - [ ] Bootcode changed
-
   * `label pc-core` become default
   * `waitusb=10:LABEL=pc-core-data` (wait 10s for `pc-core-data` volume)
   * ~~`user=docker`~~ (create & default user : `docker`)
@@ -47,11 +46,9 @@
 - [x] Rebrand `/etc/profile.d/boot2docker` -> `/etc/profile.d/pc-core` (**Can we remove it?**)
 - [x] Rebrand `/usr/local/etc/hostname` : boot2docker -> pc-core
 - [x] Rebrand `/etc/motd`
-
 - [x] Remove Parallels (prltoolsd)/ Xen (xedaemon)/ VMWare (vmtoolsd)/ Hyper-V KVP Supports
 - [x] Remove `/rootfs/etc/rc.d/automated_script.sh`
 - [x] Remove `/etc/rc.d/sshd`
-
 - [x] Disable IPv6 `/etc/rc.d/sysctl.conf`
 
 
@@ -148,7 +145,7 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 - [x] Pre-generate Docker TLS AUTHCERT/KEYCERTS/PRVKEY
 
 
-## Boot
+## Boot Error
 
 - [ ] Segfault for disable ipv6
 
