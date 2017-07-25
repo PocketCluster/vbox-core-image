@@ -1,6 +1,6 @@
 build: | output
 	cp -rf ../.git .
-	find . -name ".DS_Store" | xargs rm
+	(find . -name ".DS_Store" | xargs rm || true)
 	docker build -t pc-core .
 	docker run -it --name pc-core -v ${PWD}/output:/tmp/output pc-core /tmp/make_iso.sh
 	docker cp pc-core:/pc-core.iso ${PWD}/output/
