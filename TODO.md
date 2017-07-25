@@ -126,18 +126,14 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 - [x] link to /etc/pocket -> /mnt/$PARTNAME/etc/pocket
 
 
-## Network
-
-- [ ] Remove Serial Access
-- [ ] Remove SSH Daemon
-- [ ] Remove `ip` command
-
-
 ## Misc
 
+- [x] Remove SSH Daemon
+- [ ] Remove Serial Access
+- [ ] Remove `ip` command
 - [ ] Remove autologin
 - [ ] Remove forgiving-getty
-- [ ] Gerenrate Certificate with Network Interface `eth0`
+- [ ] Gerenrate Certificate with Network Interface `eth0` if possible
 - [ ] Docker should listen one interface `eth1`
 
 
@@ -148,8 +144,8 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 - [x] Pre-generate Cluster ID
 - [x] Pre-generate Teleport HostUUID
 - [x] Add Username
-- [x] Pre-generate TCP TLS AUTHCERT/KEYCERTS/PRVKEY
-- [ ] Pre-generate Docker TLS AUTHCERT/KEYCERTS/PRVKEY
+- [x] Pre-generate Master Pubkey/Core Private, Public Keys
+- [x] Pre-generate Docker TLS AUTHCERT/KEYCERTS/PRVKEY
 
 
 ## Boot
