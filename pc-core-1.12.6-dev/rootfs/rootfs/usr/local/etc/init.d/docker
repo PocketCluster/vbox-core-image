@@ -13,7 +13,6 @@ test -f '/var/lib/boot2docker/profile' && . '/var/lib/boot2docker/profile'
 : ${DOCKER_LOGFILE:=/var/lib/boot2docker/docker.log}
 
 : ${SYSTEM_AUTH_CERT_FILE:="/etc/ssl/certs/ca-certificates.crt"}
-: ${CLUSTER_ID_FILE:="/etc/pocket/cluster.id"}
 
 : ${CERTDIR:=/etc/pocket/pki/}
 : ${CACERT:="${CERTDIR}pc_core_engine.acr"}
@@ -41,24 +40,15 @@ start() {
         echo "Insufficient system auth certificate data"
         return
     fi
-    # Check Cluster ID file exists
-    if [ ! -f "$CLUSTER_ID_FILE" ]; then
-        echo "Insufficient cluster identity"
-        return
-    fi
 
     # Update System Auth Cert Pool
     cat ${CACERT} >> ${SYSTEM_AUTH_CERT_FILE}
-
-    # Setup Master Host
-    CID=$(cat ${CLUSTER_ID_FILE} 2>/dev/null)
-    MASTER_HOST="pc-master.${CID}.cluster.pocketcluster.io"
 
     # Setup Extra Arguments
     EXTRA_ARGS="--dns 127.0.0.1"
     EXTRA_ARGS="$EXTRA_ARGS --tlsverify --tlscacert=${CACERT} --tlscert=${CERT} --tlskey=${KEY}"
     EXTRA_ARGS="$EXTRA_ARGS --cluster-advertise=eth1:2376"
-    EXTRA_ARGS="$EXTRA_ARGS --cluster-store=etcd://${MASTER_HOST}:2379"
+    EXTRA_ARGS="$EXTRA_ARGS --cluster-store=etcd://pc-master:2379"
     EXTRA_ARGS="$EXTRA_ARGS --cluster-store-opt kv.cacertfile=${CACERT} --cluster-store-opt kv.certfile=${CERT} --cluster-store-opt kv.keyfile=${KEY}"
 
     mkdir -p "$DOCKER_DIR"
