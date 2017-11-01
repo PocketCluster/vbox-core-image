@@ -133,7 +133,7 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 - [ ] Remove forgiving-getty
 - [ ] Gerenrate Certificate with Network Interface `eth0` if possible
 - [ ] Docker should listen one interface `eth1`
-
+- [ ] Remove tftpd
 
 ## Certificate to Disk
 
