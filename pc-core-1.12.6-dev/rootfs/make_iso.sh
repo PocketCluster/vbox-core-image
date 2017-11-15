@@ -15,6 +15,8 @@ grep -q "/opt/shutdown.sh" $ROOTFS/etc/init.d/rc.shutdown || ( echo "Error: fail
 # Make some handy symlinks (so these things are easier to find)
 ln -fs /var/lib/boot2docker/docker.log $ROOTFS/var/log/
 ln -fs /usr/local/etc/init.d/docker $ROOTFS/etc/init.d/
+ln -fs /var/lib/boot2docker/pocket.log $ROOTFS/var/log/
+ln -fs /usr/local/etc/init.d/pocket $ROOTFS/etc/init.d/
 
 # Setup /etc/os-release with some nice contents
 pccVersion="$(cat $ROOTFS/etc/version)" # something like "1.1.0"

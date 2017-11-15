@@ -175,9 +175,9 @@ RUN chmod +x $ROOTFS/usr/local/bin/generate_cert
 
 # Build VBox guest additions
 #   http://download.virtualbox.org/virtualbox/
-ENV VBOX_VERSION 5.1.22
+ENV VBOX_VERSION 5.1.30
 #   https://www.virtualbox.org/download/hashes/$VBOX_VERSION/SHA256SUMS
-ENV VBOX_SHA256 54df14f234b6aa484b94939ab0f435b5dd859417612b65a399ecc34a62060380
+ENV VBOX_SHA256 631ca8e8d513acf43a75de56a71a31aaffb5624864c57d10346ba657d991ec1e
 #   (VBoxGuestAdditions_X.Y.Z.iso SHA256, for verification)
 
 RUN mkdir -p /vboxguest

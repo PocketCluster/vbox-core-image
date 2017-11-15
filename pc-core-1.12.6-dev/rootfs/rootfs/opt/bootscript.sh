@@ -67,7 +67,7 @@ ip a
 echo "-------------------"
 
 # Launch PocketD
-
+/etc/rc.d/pocket
 
 # Launch Docker
 /etc/rc.d/docker
