@@ -66,8 +66,10 @@ date
 ip a
 echo "-------------------"
 
-# Launch PocketD
+# Launch PocketD w/ log cleanup
+cat /dev/null > /var/lib/boot2docker/pocket.log
 /etc/rc.d/pocket
 
-# Launch Docker
+# Launch Docker w/ log cleanup
+cat /dev/null > /var/lib/boot2docker/docker.log
 /etc/rc.d/docker
