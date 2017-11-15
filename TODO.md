@@ -134,6 +134,8 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 - [ ] Gerenrate Certificate with Network Interface `eth0` if possible
 - [ ] Docker should listen one interface `eth1`
 - [ ] Remove tftpd
+- [ ] Modify timezone to user's timezone. TZ is set to `UTC` now at `Dockerfile`.
+- [ ] Build release image from `master`
 
 ## Certificate to Disk
 
