@@ -46,8 +46,10 @@ fi
 # User Creation
 if [ -f "/etc/pocket/core.user.name" ]; then
     CORE_USER=$(cat /etc/pocket/core.user.name)
+    CORE_UID=$(cat /etc/pocket/core.user.uid)
+    CORE_GID=$(cat /etc/pocket/core.user.gid)
     echo "Adding Core User \"${CORE_USER}\""
-    /bin/adduser -g "PocketCluster Core User" -s /bin/false -G docker -D -u 1000 ${CORE_USER}
+    /bin/adduser -g "PocketCluster Core User" -s /bin/false -G docker -D -u ${CORE_UID} ${CORE_USER}
 fi
 
 # Automount Shared Folders (VirtualBox, etc.); start VBox services
