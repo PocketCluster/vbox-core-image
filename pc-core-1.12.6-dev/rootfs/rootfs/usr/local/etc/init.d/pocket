@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# chkconfig: 35 99 01
+[ $(id -u) = 0 ] || { echo 'must be root' ; exit 1; }
+
+: ${POCKET_LOGFILE:=/var/lib/boot2docker/pocket.log}
+
+start() {
+	echo -n "Starting PocketCluster service..."
+	/opt/pocket/bin/pocketd >> ${POCKET_LOGFILE} 2>&1 &
+	echo $! > /var/run/pocket.pid
+	echo
+}       
+
+stop() {
+    PID=$(cat /var/run/pocket.pid)
+    kill $PID
+    while kill -0 $PID &>/dev/null; do
+        sleep 0.1
+    done
+}
+
+reload() {
+    if check; then
+        stop
+        i=30
+        while check ; do
+            sleep 1
+            i=$(expr $i - 1)
+            [ "$i" -gt 0 ] || { echo "Failed to stop PocketCluster service" ; exit 1 ; }
+        done
+    fi
+    start
+}
+
+check() {
+    [ -f /var/run/pocket.pid ] && ps -A -o pid | grep "^\s*$(cat /var/run/pocket.pid)$" > /dev/null 2>&1
+}
+
+case $1 in
+    start) start;;
+    stop) stop;;
+    restart) restart;;
+    status) status;;
+    *) echo "Usage $0 {start|stop|restart|status}"; exit 1
+esac

@@ -42,6 +42,11 @@ case "$1" in
 			fi
 		fi
 
+		# prepend essential nameserver
+		echo "nameserver 127.0.0.1" >> $RESOLV_CONF
+		echo "nameserver 208.67.222.222" >> $RESOLV_CONF
+		echo "nameserver 208.67.220.220" >> $RESOLV_CONF
+
 		for i in $dns ; do
 			echo "$(date) adding dns $i" >> /var/log/udhcp.log
 			echo adding dns $i

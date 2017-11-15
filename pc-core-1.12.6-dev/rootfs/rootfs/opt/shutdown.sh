@@ -4,3 +4,5 @@
 echo "${YELLOW}Running pc-core shutdown script...${NORMAL}"
 
 /usr/local/etc/init.d/docker stop
+
+/usr/local/etc/init.d/pocket stop

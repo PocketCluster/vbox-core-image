@@ -69,8 +69,8 @@ curl -fL -o generate_cert https://github.com/SvenDowideit/generate_cert/releases
 #   http://download.virtualbox.org/virtualbox/
 #   https://www.virtualbox.org/download/hashes/$VBOX_VERSION/SHA256SUMS
 #   (VBoxGuestAdditions_X.Y.Z.iso SHA256, for verification)
-export VBOX_VERSION=${VBOX_VERSION:-5.1.22}
-export VBOX_SHA256=${VBOX_SHA256:-54df14f234b6aa484b94939ab0f435b5dd859417612b65a399ecc34a62060380}
+export VBOX_VERSION=${VBOX_VERSION:-5.1.30}
+export VBOX_SHA256=${VBOX_SHA256:-631ca8e8d513acf43a75de56a71a31aaffb5624864c57d10346ba657d991ec1e}
 
 curl -fL -o ${PWD}/vboxguest.iso http://download.virtualbox.org/virtualbox/${VBOX_VERSION}/VBoxGuestAdditions_${VBOX_VERSION}.iso
 echo "${VBOX_SHA256} *vboxguest.iso" | sha256sum -c -
