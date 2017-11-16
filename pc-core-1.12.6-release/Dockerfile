@@ -252,11 +252,15 @@ RUN find "$ROOTFS/etc/rc.d/" "$ROOTFS/usr/local/etc/init.d/" -type f -exec chmod
 RUN mv -v "$ROOTFS/etc/init.d/dhcp.sh" "$ROOTFS/etc/rc.d/"
 
 # Add serial console
-RUN set -ex; \
-	for s in 0 1 2 3; do \
-		echo "ttyS${s}:2345:respawn:/usr/local/bin/forgiving-getty ttyS${s}" >> "$ROOTFS/etc/inittab"; \
-	done; \
-	cat "$ROOTFS/etc/inittab"
+#RUN set -ex; \
+#	for s in 0 1 2 3; do \
+#		echo "ttyS${s}:2345:respawn:/usr/local/bin/forgiving-getty ttyS${s}" >> "$ROOTFS/etc/inittab"; \
+#	done; \
+# 	cat "$ROOTFS/etc/inittab"
+
+# Disable all serial console with inittab
+COPY inittab "$ROOTFS/etc/inittab"
+RUN cat "$ROOTFS/etc/inittab"
 
 # fix "su -"
 RUN echo root > "$ROOTFS/etc/sysconfig/superuser"
