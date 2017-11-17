@@ -32,11 +32,11 @@
   * <http://www.syslinux.org/wiki/index.php?title=SYSLINUX#What_is_SYSLINUX.3F>
   * `isolinux.cfg` <http://www.tinycorelinux.net/corebook.pdf>
 - [x] Rebrand logo `/rootfs/isolinux/boot.msg`
-- [ ] Bootcode changed
+- [x] Bootcode changed
   * `label pc-core` become default
   * `waitusb=10:LABEL=pc-core-data` (wait 10s for `pc-core-data` volume)
   * ~~`user=docker`~~ (create & default user : `docker`)
-- [ ] Remove Serial Console
+- [x] Remove Serial Console
 
 
 ## Rootfs
@@ -108,7 +108,7 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 
 - [x] Change the magic word to `pc-core, please format-me`
 - [x] Remove _VMWare partition mount_ part
-- [ ] Formalize swap space size
+- [x] Formalize swap space size (set to 8G `+8192M`)
 - [x] Remove old way of using persistent hdd (line 81)
 
   ```diff
@@ -127,13 +127,13 @@ TinyCore (TC) boot chain : `/opt/bootsync.sh` -> `/opt/bootscript.sh` -> `/etc/r
 
 - [x] Remove SSH Daemon
 - [ ] Fix network interface order
-- [ ] Remove Serial Access
+- [x] Remove Serial Access
 - [ ] Remove `ip` command
-- [ ] Remove autologin
-- [ ] Remove forgiving-getty
+- [x] Remove autologin from `isolinux.cfg`
+- [x] Remove forgiving-getty from `/etc/inittab` and `Dockerfile`
 - [ ] Gerenrate Certificate with Network Interface `eth0` if possible
-- [ ] Docker should listen one interface `eth1`
-- [ ] Remove tftpd
+- [x] Docker should listen one interface `eth1` (Done in `/usr/local/etc/init.d/docker`)
+- [ ] Remove tftpd (`/bin/busybox` -> `/sbin/udpsvd` -> `/etc/init.d/services/tftpd`)
 - [ ] Modify timezone to user's timezone. TZ is set to `UTC` now at `Dockerfile`.
 - [ ] Build release image from `master`
 

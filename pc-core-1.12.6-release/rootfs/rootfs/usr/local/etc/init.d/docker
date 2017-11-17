@@ -24,7 +24,8 @@ export PATH=${PATH}:/usr/local/sbin
 
 start() {
     if [ ! -e "/etc/docker" ]; then
-        echo "Linking /etc/docker to /var/lib/boot2docker for persistence"
+        #echo "Linking /etc/docker to /var/lib/boot2docker for persistence"
+        echo "Persisting /etc/docker ..."
         mkdir -p "/var/lib/boot2docker/etc/docker"
         ln -sf "/var/lib/boot2docker/etc/docker" "/etc/docker"
     fi
