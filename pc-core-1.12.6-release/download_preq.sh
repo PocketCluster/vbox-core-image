@@ -77,7 +77,7 @@ echo "${VBOX_SHA256} *vboxguest.iso" | sha256sum -c -
 
 
 # --- Get the Docker ---
-export DOCKER_VERSION=${DOCKER_VERSION:-"1.12.6"}
+export DOCKER_VERSION=${DOCKER_VERSION:-"1.13.1"}
 
 curl -fSL -o ${PWD}/docker-${DOCKER_VERSION}.tgz "https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz"
 
