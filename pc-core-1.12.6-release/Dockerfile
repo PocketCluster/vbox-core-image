@@ -215,7 +215,7 @@ COPY VERSION $ROOTFS/etc/version
 RUN cp -v "$ROOTFS/etc/version" /tmp/iso/version
 
 # Get the Docker binaries with version that matches our boot2docker version.
-ENV DOCKER_VERSION "1.12.6"
+ENV DOCKER_VERSION "1.13.1"
 
 COPY docker-${DOCKER_VERSION}.tgz /tmp
 RUN set -ex \
