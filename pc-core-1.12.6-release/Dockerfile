@@ -7,7 +7,6 @@ RUN apt-get update && apt-get -y install \
                         bc \
                         git \
                         build-essential \
-                        golang \
                         cpio \
                         gcc libc6 libc6-dev \
                         kmod \
