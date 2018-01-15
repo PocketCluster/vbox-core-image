@@ -223,7 +223,7 @@ RUN depmod -a -b "$ROOTFS" "$KERNEL_VERSION"
 COPY VERSION $ROOTFS/etc/version
 RUN cp -v "$ROOTFS/etc/version" /tmp/iso/version
 
-# Get the Docker binaries with version that matches our boot2docker version.
+# (2018/01/15:stkim1) use custom docker version
 ENV DOCKER_VERSION "1.14"
 
 COPY pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz /tmp
@@ -261,13 +261,6 @@ RUN find "$ROOTFS/etc/rc.d/" "$ROOTFS/usr/local/etc/init.d/" -type f -exec chmod
 
 # move dhcp.sh out of init.d as we're triggering it manually so its ready a bit faster
 RUN mv -v "$ROOTFS/etc/init.d/dhcp.sh" "$ROOTFS/etc/rc.d/"
-
-# Add serial console
-#RUN set -ex; \
-#	for s in 0 1 2 3; do \
-#		echo "ttyS${s}:2345:respawn:/usr/local/bin/forgiving-getty ttyS${s}" >> "$ROOTFS/etc/inittab"; \
-#	done; \
-# 	cat "$ROOTFS/etc/inittab"
 
 # Disable all serial console with inittab
 COPY inittab "$ROOTFS/etc/inittab"

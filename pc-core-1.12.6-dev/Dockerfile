@@ -1,6 +1,7 @@
-FROM debian:jessie
+FROM ubuntu:xenial
 
-RUN apt-get update && apt-get -y install  unzip \
+RUN apt-get update && apt-get -y install \
+                        unzip \
                         xz-utils \
                         curl \
                         bc \
@@ -17,7 +18,14 @@ RUN apt-get update && apt-get -y install  unzip \
                         isolinux \
                         automake \
                         pkg-config \
-                        p7zip-full
+                        p7zip-full \
+# (2018/01/15:stkim1) dependencies for dockerd
+                        libapparmor-dev \
+                        libsystemd-dev \
+                        liblvm2-dev \
+                        libseccomp-dev \
+                        tzdata \
+                        --no-install-recommends
 
 # https://www.kernel.org/
 ENV KERNEL_VERSION  4.4.76
@@ -166,7 +174,9 @@ RUN set -x \
 	&& mv resolv.conf.bak "$ROOTFS/etc/resolv.conf"
 
 # Apply horrible hacks
-RUN ln -sT lib "$ROOTFS/lib64"
+RUN ln -sT lib "$ROOTFS/lib64" \
+# (2018/01/15:stkim1) dependencies for dockerd
+    && ln -sT /lib/x86_64-linux-gnu "$ROOTFS/lib/x86_64-linux-gnu"
 
 # get generate_cert
 COPY generate_cert $ROOTFS/usr/local/bin/generate_cert
@@ -214,14 +224,16 @@ RUN depmod -a -b "$ROOTFS" "$KERNEL_VERSION"
 COPY VERSION $ROOTFS/etc/version
 RUN cp -v "$ROOTFS/etc/version" /tmp/iso/version
 
-# Get the Docker binaries with version that matches our boot2docker version.
-ENV DOCKER_VERSION "1.13.1"
+# (2018/01/15:stkim1) use custom docker version
+ENV DOCKER_VERSION "1.14"
 
-COPY docker-${DOCKER_VERSION}.tgz /tmp
+COPY pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz /tmp
 RUN set -ex \
-	&& tar -xvzf /tmp/docker-${DOCKER_VERSION}.tgz -C "$ROOTFS/usr/local/bin" --strip-components=1 \
-	&& rm /tmp/docker-${DOCKER_VERSION}.tgz \
-	&& chroot "$ROOTFS" docker -v
+    && tar -xvzf /tmp/pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz -C "$ROOTFS/usr/local/bin" --strip-components=1 \
+    && rm /tmp/pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz \
+    && chroot "$ROOTFS" ldconfig \
+    && ldd "${ROOTFS}/usr/local/bin/pcdckrd" \
+    && "${ROOTFS}/usr/local/bin/dockerd" -v
 
 # Remove used deps
 RUN set -ex \
@@ -263,7 +275,7 @@ RUN echo root > "$ROOTFS/etc/sysconfig/superuser"
 
 # add some timezone files so we're explicit about being UTC
 RUN echo 'UTC' > "$ROOTFS/etc/timezone" \
-	&& cp -vL /usr/share/zoneinfo/UTC "$ROOTFS/etc/localtime"
+    && cp -vL /usr/share/zoneinfo/Etc/UTC "$ROOTFS/etc/localtime"
 
 # make sure the "docker" group exists already
 RUN chroot "$ROOTFS" addgroup -S docker
