@@ -7,7 +7,6 @@ RUN apt-get update && apt-get -y install \
                         bc \
                         git \
                         build-essential \
-                        golang \
                         cpio \
                         gcc libc6 libc6-dev \
                         kmod \
@@ -176,7 +175,7 @@ RUN set -x \
 # Apply horrible hacks
 RUN ln -sT lib "$ROOTFS/lib64" \
 # (2018/01/15:stkim1) dependencies for dockerd
-    && ln -sT /lib/x86_64-linux-gnu "$ROOTFS/lib/x86_64-linux-gnu"
+    && ln -sT /usr/lib/x86_64-linux-gnu "$ROOTFS/usr/lib/x86_64-linux-gnu"
 
 # get generate_cert
 COPY generate_cert $ROOTFS/usr/local/bin/generate_cert
@@ -231,7 +230,7 @@ COPY pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz /tmp
 RUN set -ex \
     && tar -xvzf /tmp/pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz -C "$ROOTFS/usr/local/bin" --strip-components=1 \
     && rm /tmp/pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz \
-    && chroot "$ROOTFS" ldconfig \
+# (2018/01/16:stkim1) this does not show lib dependencies in image created, but here to check it anyway
     && ldd "${ROOTFS}/usr/local/bin/pcdckrd" \
     && "${ROOTFS}/usr/local/bin/dockerd" -v
 
