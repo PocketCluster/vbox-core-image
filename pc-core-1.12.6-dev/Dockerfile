@@ -19,10 +19,10 @@ RUN apt-get update && apt-get -y install \
                         pkg-config \
                         p7zip-full \
 # (2018/01/15:stkim1) dependencies for dockerd
-                        libapparmor-dev \
-                        libsystemd-dev \
-                        liblvm2-dev \
-                        libseccomp-dev \
+                        libapparmor1 \
+                        libsystemd0 \
+                        libdevmapper1.02.1 \
+                        libseccomp2 \
                         tzdata \
                         --no-install-recommends
 
@@ -173,9 +173,29 @@ RUN set -x \
 	&& mv resolv.conf.bak "$ROOTFS/etc/resolv.conf"
 
 # Apply horrible hacks
-RUN ln -sT lib "$ROOTFS/lib64" \
-# (2018/01/15:stkim1) dependencies for dockerd
-    && ln -sT /usr/lib/x86_64-linux-gnu "$ROOTFS/usr/lib/x86_64-linux-gnu"
+RUN ln -sT lib "$ROOTFS/lib64"
+
+# (2018/01/16:stkim1) Apply Docker dependency copying hack
+RUN cp /lib/x86_64-linux-gnu/libdevmapper.so.1.02.1 /rootfs/lib/ \
+    && cp /lib/x86_64-linux-gnu/libselinux.so.1 /rootfs/lib/ \
+    && cp /lib/x86_64-linux-gnu/libseccomp.so.2.3.1 /rootfs/lib/libseccomp-2.3.1.so \
+    && cp /lib/x86_64-linux-gnu/libapparmor.so.1.4.0 /rootfs/lib/libapparmor-1.4.0.so \
+    && cp /lib/x86_64-linux-gnu/libsystemd.so.0.14.0 /rootfs/lib/libsystemd-0.14.0.so \
+    && cp /lib/x86_64-linux-gnu/libgpg-error.so.0.17.0 /rootfs/lib/libgpg-error-0.17.0.so \
+    && cp /lib/x86_64-linux-gnu/libgcrypt.so.20.0.5 /rootfs/lib/libgcrypt-20.0.5.so \
+    && cp /lib/x86_64-linux-gnu/libudev.so.1.6.4 /rootfs/lib/libudev-1.6.4.so \
+    && cp /lib/x86_64-linux-gnu/libpcre.so.3.13.2 /rootfs/lib/libpcre-3.13.2.so \
+    && cd /rootfs/lib \
+    && ln -sT libseccomp-2.3.1.so libseccomp.so.2 \
+    && ln -sT libapparmor-1.4.0.so libapparmor.so.1 \
+    && ln -sT libsystemd-0.14.0.so libsystemd.so.0 \
+    && ln -sT libgpg-error-0.17.0.so libgpg-error.so.0 \
+    && ln -sT libgcrypt-20.0.5.so libgcrypt.so.20   \
+    && ln -sT libudev-1.6.4.so libudev.so.1 \
+    && ln -sT libpcre-3.13.2.so libpcre.so.3 \
+    && chmod 755 /rootfs/lib/*.so \
+    && chmod 755 libdevmapper.so.1.02.1 \
+    && chmod 755 libselinux.so.1
 
 # get generate_cert
 COPY generate_cert $ROOTFS/usr/local/bin/generate_cert
