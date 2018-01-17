@@ -176,26 +176,27 @@ RUN set -x \
 RUN ln -sT lib "$ROOTFS/lib64"
 
 # (2018/01/16:stkim1) Apply Docker dependency copying hack
-RUN cp /lib/x86_64-linux-gnu/libdevmapper.so.1.02.1 /rootfs/lib/ \
-    && cp /lib/x86_64-linux-gnu/libselinux.so.1 /rootfs/lib/ \
-    && cp /lib/x86_64-linux-gnu/libseccomp.so.2.3.1 /rootfs/lib/libseccomp-2.3.1.so \
-    && cp /lib/x86_64-linux-gnu/libapparmor.so.1.4.0 /rootfs/lib/libapparmor-1.4.0.so \
-    && cp /lib/x86_64-linux-gnu/libsystemd.so.0.14.0 /rootfs/lib/libsystemd-0.14.0.so \
-    && cp /lib/x86_64-linux-gnu/libgpg-error.so.0.17.0 /rootfs/lib/libgpg-error-0.17.0.so \
-    && cp /lib/x86_64-linux-gnu/libgcrypt.so.20.0.5 /rootfs/lib/libgcrypt-20.0.5.so \
-    && cp /lib/x86_64-linux-gnu/libudev.so.1.6.4 /rootfs/lib/libudev-1.6.4.so \
-    && cp /lib/x86_64-linux-gnu/libpcre.so.3.13.2 /rootfs/lib/libpcre-3.13.2.so \
-    && cd /rootfs/lib \
-    && ln -sT libseccomp-2.3.1.so libseccomp.so.2 \
-    && ln -sT libapparmor-1.4.0.so libapparmor.so.1 \
-    && ln -sT libsystemd-0.14.0.so libsystemd.so.0 \
-    && ln -sT libgpg-error-0.17.0.so libgpg-error.so.0 \
-    && ln -sT libgcrypt-20.0.5.so libgcrypt.so.20   \
-    && ln -sT libudev-1.6.4.so libudev.so.1 \
-    && ln -sT libpcre-3.13.2.so libpcre.so.3 \
-    && chmod 755 /rootfs/lib/*.so \
+RUN cp /lib/x86_64-linux-gnu/libdevmapper.so.1.02.1    ${ROOTFS}/lib/ \
+    && cp /lib/x86_64-linux-gnu/libselinux.so.1        ${ROOTFS}/lib/ \
+    && cp /lib/x86_64-linux-gnu/libseccomp.so.2.3.1    ${ROOTFS}/lib/libseccomp-2.3.1.so \
+    && cp /lib/x86_64-linux-gnu/libapparmor.so.1.4.0   ${ROOTFS}/lib/libapparmor-1.4.0.so \
+    && cp /lib/x86_64-linux-gnu/libsystemd.so.0.14.0   ${ROOTFS}/lib/libsystemd-0.14.0.so \
+    && cp /lib/x86_64-linux-gnu/libgpg-error.so.0.17.0 ${ROOTFS}/lib/libgpg-error-0.17.0.so \
+    && cp /lib/x86_64-linux-gnu/libgcrypt.so.20.0.5    ${ROOTFS}/lib/libgcrypt-20.0.5.so \
+    && cp /lib/x86_64-linux-gnu/libudev.so.1.6.4       ${ROOTFS}/lib/libudev-1.6.4.so \
+    && cp /lib/x86_64-linux-gnu/libpcre.so.3.13.2      ${ROOTFS}/lib/libpcre-3.13.2.so \
+    && cd ${ROOTFS}/lib \
+    && ln -sT libseccomp-2.3.1.so                      libseccomp.so.2 \
+    && ln -sT libapparmor-1.4.0.so                     libapparmor.so.1 \
+    && ln -sT libsystemd-0.14.0.so                     libsystemd.so.0 \
+    && ln -sT libgpg-error-0.17.0.so                   libgpg-error.so.0 \
+    && ln -sT libgcrypt-20.0.5.so                      libgcrypt.so.20 \
+    && ln -sT libudev-1.6.4.so                         libudev.so.1 \
+    && ln -sT libpcre-3.13.2.so                        libpcre.so.3 \
+    && chmod 755 *.so \
     && chmod 755 libdevmapper.so.1.02.1 \
-    && chmod 755 libselinux.so.1
+    && chmod 755 libselinux.so.1 \
+    && cd /
 
 # get generate_cert
 COPY generate_cert $ROOTFS/usr/local/bin/generate_cert
@@ -253,6 +254,18 @@ RUN set -ex \
 # (2018/01/16:stkim1) this does not show lib dependencies in image created, but here to check it anyway
     && ldd "${ROOTFS}/usr/local/bin/pcdckrd" \
     && "${ROOTFS}/usr/local/bin/dockerd" -v
+
+# (2018/01/17:stkim1) docker client installation for debugging
+COPY docker-1.14.0-dev "${ROOTFS}/usr/local/bin/docker"
+RUN set -ex \
+    && apt-get install -y libltdl7 \
+    && cp /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1   ${ROOTFS}/usr/lib/libltdl-7.3.1.so \
+    && cd ${ROOTFS}/usr/lib/ \
+    && ln -sT libltdl-7.3.1.so                         libltdl.so.7 \
+    && chmod 755 libltdl-7.3.1.so \
+    && cd / \
+    && ldd "${ROOTFS}/usr/local/bin/docker" \
+    && "${ROOTFS}/usr/local/bin/docker" -v
 
 # Remove used deps
 RUN set -ex \
