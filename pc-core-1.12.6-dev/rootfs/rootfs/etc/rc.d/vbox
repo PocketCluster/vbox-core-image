@@ -7,12 +7,14 @@ if modprobe vboxguest &> /dev/null && modprobe vboxsf &> /dev/null; then
 	# fire up VBoxService to do timesync, etc
 	VBoxService --disable-automount
 	# TODO some testing with VBoxService automount so we can trim down this entire hacky script
-	
-	mountOptions='defaults,iocharset=utf8'
-	if grep -q '^docker:' /etc/passwd; then
-		mountOptions="${mountOptions},uid=$(id -u docker),gid=$(id -g docker)"
+
+	# mount with user options
+	mountOptions=${mountOptions:-"defaults,iocharset=utf8"}
+	if [ -f "/etc/pocket/core.user.name" ]; then
+		coreUserName=$(cat /etc/pocket/core.user.name)
+		mountOptions="${mountOptions},uid=$(id -u ${coreUserName}),gid=$(id -g ${coreUserName})"
 	fi
-	
+
 	# try mounting "$name" (which defaults to "$dir") at "$dir",
 	# but quietly clean up empty directories if it fails
 	try_mount_share() {
