@@ -224,18 +224,6 @@ RUN set -ex \
     && rm /tmp/docker-${DOCKER_VERSION}.tgz \
     && chroot "$ROOTFS" docker -v
 
-# (2018/01/17:stkim1) docker client installation for debugging
-COPY docker-1.14.0-dev "${ROOTFS}/usr/local/bin/docker"
-RUN set -ex \
-    && apt-get install -y libltdl7 \
-    && cp /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1   ${ROOTFS}/usr/lib/libltdl-7.3.1.so \
-    && cd ${ROOTFS}/usr/lib/ \
-    && ln -sT libltdl-7.3.1.so                         libltdl.so.7 \
-    && chmod 755 libltdl-7.3.1.so \
-    && cd / \
-    && ldd "${ROOTFS}/usr/local/bin/docker" \
-    && "${ROOTFS}/usr/local/bin/docker" -v
-
 # Remove used deps
 RUN set -ex \
     && (rm /tmp/*.tgz || true) \
