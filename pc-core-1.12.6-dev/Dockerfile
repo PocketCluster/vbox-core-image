@@ -18,11 +18,6 @@ RUN apt-get update && apt-get -y install \
                         automake \
                         pkg-config \
                         p7zip-full \
-# (2018/01/15:stkim1) dependencies for dockerd
-                        libapparmor1 \
-                        libsystemd0 \
-                        libdevmapper1.02.1 \
-                        libseccomp2 \
                         tzdata \
                         --no-install-recommends
 
@@ -175,28 +170,6 @@ RUN set -x \
 # Apply horrible hacks
 RUN ln -sT lib "$ROOTFS/lib64"
 
-# (2018/01/16:stkim1) Apply Docker dependency copying hack
-RUN cp /lib/x86_64-linux-gnu/libdevmapper.so.1.02.1 /rootfs/lib/ \
-    && cp /lib/x86_64-linux-gnu/libselinux.so.1 /rootfs/lib/ \
-    && cp /lib/x86_64-linux-gnu/libseccomp.so.2.3.1 /rootfs/lib/libseccomp-2.3.1.so \
-    && cp /lib/x86_64-linux-gnu/libapparmor.so.1.4.0 /rootfs/lib/libapparmor-1.4.0.so \
-    && cp /lib/x86_64-linux-gnu/libsystemd.so.0.14.0 /rootfs/lib/libsystemd-0.14.0.so \
-    && cp /lib/x86_64-linux-gnu/libgpg-error.so.0.17.0 /rootfs/lib/libgpg-error-0.17.0.so \
-    && cp /lib/x86_64-linux-gnu/libgcrypt.so.20.0.5 /rootfs/lib/libgcrypt-20.0.5.so \
-    && cp /lib/x86_64-linux-gnu/libudev.so.1.6.4 /rootfs/lib/libudev-1.6.4.so \
-    && cp /lib/x86_64-linux-gnu/libpcre.so.3.13.2 /rootfs/lib/libpcre-3.13.2.so \
-    && cd /rootfs/lib \
-    && ln -sT libseccomp-2.3.1.so libseccomp.so.2 \
-    && ln -sT libapparmor-1.4.0.so libapparmor.so.1 \
-    && ln -sT libsystemd-0.14.0.so libsystemd.so.0 \
-    && ln -sT libgpg-error-0.17.0.so libgpg-error.so.0 \
-    && ln -sT libgcrypt-20.0.5.so libgcrypt.so.20   \
-    && ln -sT libudev-1.6.4.so libudev.so.1 \
-    && ln -sT libpcre-3.13.2.so libpcre.so.3 \
-    && chmod 755 /rootfs/lib/*.so \
-    && chmod 755 libdevmapper.so.1.02.1 \
-    && chmod 755 libselinux.so.1
-
 # get generate_cert
 COPY generate_cert $ROOTFS/usr/local/bin/generate_cert
 RUN chmod +x $ROOTFS/usr/local/bin/generate_cert
@@ -243,23 +216,20 @@ RUN depmod -a -b "$ROOTFS" "$KERNEL_VERSION"
 COPY VERSION $ROOTFS/etc/version
 RUN cp -v "$ROOTFS/etc/version" /tmp/iso/version
 
-# (2018/01/15:stkim1) use custom docker version
-ENV DOCKER_VERSION "1.14"
+ENV DOCKER_VERSION "1.12.6"
 
-COPY pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz /tmp
+COPY docker-${DOCKER_VERSION}.tgz /tmp
 RUN set -ex \
-    && tar -xvzf /tmp/pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz -C "$ROOTFS/usr/local/bin" --strip-components=1 \
-    && rm /tmp/pcdckrd-binary-x86_64-${DOCKER_VERSION}.tar.gz \
-# (2018/01/16:stkim1) this does not show lib dependencies in image created, but here to check it anyway
-    && ldd "${ROOTFS}/usr/local/bin/pcdckrd" \
-    && "${ROOTFS}/usr/local/bin/dockerd" -v
+    && tar -xvzf /tmp/docker-${DOCKER_VERSION}.tgz -C "$ROOTFS/usr/local/bin" --strip-components=1 \
+    && rm /tmp/docker-${DOCKER_VERSION}.tgz \
+    && chroot "$ROOTFS" docker -v
 
 # Remove used deps
 RUN set -ex \
-  && (rm /tmp/*.tgz || true) \
-  && (rm /tmp/*.tcz || true) \
-  && (rm /tmp/*.gz || true) \
-  && (rm /tmp/*.xz || true)
+    && (rm /tmp/*.tgz || true) \
+    && (rm /tmp/*.tcz || true) \
+    && (rm /tmp/*.gz || true) \
+    && (rm /tmp/*.xz || true)
 
 # Copy our custom rootfs
 COPY rootfs/rootfs $ROOTFS
